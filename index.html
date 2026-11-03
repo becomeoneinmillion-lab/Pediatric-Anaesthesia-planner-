@@ -19,12 +19,12 @@ header h1{font-size:0.92rem;font-weight:700;color:var(--prim)}
 main{padding:10px;max-width:550px;margin:auto}
 .tab{display:none}.tab.active{display:block}
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;box-shadow:0 1px 2px rgba(0,0,0,0.03)}
-.ctitle{font-size:0.75rem;font-weight:700;color:var(--mut);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between}
+.ctitle{font-size:0.75rem;font-weight:700;color:var(--mut);text-transform:uppercase;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ig{margin-bottom:8px}
 label{display:block;font-size:0.75rem;font-weight:600;margin-bottom:3px;color:#334155}
-input{width:100%;background:#f8fafc;border:1.5px solid var(--border);color:var(--txt);padding:8px 10px;border-radius:6px;font-size:0.9rem;outline:none}
-input:focus{border-color:var(--prim);background:#fff}
+input,select{width:100%;background:#f8fafc;border:1.5px solid var(--border);color:var(--txt);padding:8px 10px;border-radius:6px;font-size:0.9rem;outline:none}
+input:focus,select:focus{border-color:var(--prim);background:#fff}
 .btn-sm{background:var(--prim);color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:0.72rem;cursor:pointer;font-weight:600}
 .btn-gray{background:#64748b;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:0.72rem;cursor:pointer;font-weight:600}
 .cat-box{border-radius:8px;padding:8px 10px;margin-bottom:8px;border:1px solid var(--border)}
@@ -61,10 +61,21 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
   <!-- TAB 1: INPUTS -->
   <section id="t1" class="tab active">
     <div class="card">
-      <div class="ctitle">Patient Category</div>
+      <div class="ctitle">Patient Demographics</div>
+      
+      <!-- Sex Selection -->
+      <div class="ig">
+        <label>Sex</label>
+        <div class="pgrid">
+          <div class="pill sel" id="sexM" onclick="setSex('Male')">👦 Male</div>
+          <div class="pill" id="sexF" onclick="setSex('Female')">👧 Female</div>
+        </div>
+      </div>
+
+      <div class="ctitle" style="margin-top:10px">Patient Category</div>
       <div class="g2" style="margin-bottom:8px">
         <button type="button" class="btn-sm" id="btnChild" onclick="setCat('child')" style="padding:9px">1. Child</button>
-        <button type="button" class="btn-gray" id="btnInfant" onclick="setCat('infant')" style="padding:9px">2. Infant/Neonate</button>
+        <button type="button" class="btn-gray" id="btnInfant" onclick="setCat('infant')" style="padding:9px">2. Infant / Neonate</button>
       </div>
 
       <div id="boxYears" class="ig">
@@ -109,19 +120,22 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
       <div class="row"><span class="lbl">Face Mask</span><span class="val" id="eqM">--</span></div>
       <div class="row"><span class="lbl">Airway (OPA)</span><span class="val" id="eqA">--</span></div>
       <div class="row"><span class="lbl">Laryngoscope Blade</span><span class="val" id="eqB">--</span></div>
+      
+      <!-- Tubes: 0.5 mm Step + Calculated -->
       <div class="row">
-        <div><span class="lbl">ETT Uncuffed (ID)</span><span class="sub-formula" id="subEu">Formula: (Age/4) + 4</span></div>
-        <span class="val" id="eqEu" style="color:var(--prim);font-size:1rem">--</span>
+        <div><span class="lbl">ETT Uncuffed (0.5 Step)</span><span class="sub-formula" id="subEu">Formula: (Age/4) + 4</span></div>
+        <span class="val" id="eqEu" style="color:var(--prim);font-size:0.95rem">--</span>
       </div>
       <div class="row">
-        <div><span class="lbl">ETT Cuffed (ID)</span><span class="sub-formula" id="subEc">Formula: (Age/4) + 3.5</span></div>
-        <span class="val" id="eqEc" style="color:var(--prim);font-size:1rem">--</span>
+        <div><span class="lbl">ETT Cuffed (0.5 Step)</span><span class="sub-formula" id="subEc">Formula: (Age/4) + 3.5</span></div>
+        <span class="val" id="eqEc" style="color:var(--prim);font-size:0.95rem">--</span>
       </div>
       <div class="row">
         <div><span class="lbl">ETT Depth (Oral Lip)</span><span class="sub-formula" id="subEd">Formula: (Age/2) + 12 cm</span></div>
         <span class="val" id="eqEd">--</span>
       </div>
     </div>
+
     <div class="card">
       <div class="ctitle">Ventilator & Monitor</div>
       <div class="row"><div><span class="lbl">VT (Tidal Volume)</span><span class="sub-formula">6 - 8 mL/kg</span></div><span class="val" id="eqVt">--</span></div>
@@ -157,7 +171,7 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
   <!-- TAB 5: EMERGENCY -->
   <section id="t5" class="tab">
     <div class="ctitle" style="color:var(--danger);margin:4px 4px 8px">Emergency Protocols</div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Adrenaline (1:10,000)</span><span id="emAdr">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">10 mcg/kg IV (0.1 mL/kg of 1:10,000). Dilute 1 mL (1:1000) in 9 mL NS.</small></div>
+    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Adrenaline (1:10,000)</span><span id="emAdr">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">10 mcg/kg IV (0.1 mL/kg of 1:10,000). Dilute 1 mL in 9 mL NS.</small></div>
     <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Atropine</span><span id="emAtr">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">0.02 mg/kg IV (Min: 0.1 mg, Max: 0.5 mg).</small></div>
     <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Ephedrine</span><span id="emEph">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">0.1 - 0.2 mg/kg IV. Dilute 30 mg in 9 mL NS (3 mg/mL).</small></div>
     <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Hydrocortisone</span><span id="emHyd">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">2 - 4 mg/kg IV.</small></div>
@@ -177,7 +191,28 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
       <button class="btn-sm" style="width:100%;padding:9px" type="button" onclick="saveDoc()">Save Profile</button>
     </div>
 
-    <!-- Editable Drug Doses -->
+    <!-- Add New Custom Drug Form -->
+    <div class="card" style="border:1.5px dashed var(--prim);background:#f0f9ff">
+      <div class="ctitle" style="color:var(--prim)">+ Add New Drug to Formulary</div>
+      <div class="ig"><label>Drug Name</label><input type="text" id="newDrugName" placeholder="e.g. Dexmedetomidine"></div>
+      <div class="g2">
+        <div class="ig"><label>Per-kg Dose</label><input type="number" step="0.001" id="newDrugDose" placeholder="e.g. 0.5"></div>
+        <div class="ig">
+          <label>Unit</label>
+          <select id="newDrugUnit">
+            <option value="mcg">mcg/kg</option>
+            <option value="mg">mg/kg</option>
+          </select>
+        </div>
+      </div>
+      <div class="ig">
+        <label>Assign Category</label>
+        <select id="newDrugCat"></select>
+      </div>
+      <button class="btn-sm" style="width:100%;padding:8px" type="button" onclick="addNewDrug()">Add Drug</button>
+    </div>
+
+    <!-- Editable Drug Doses List -->
     <div class="card">
       <div class="ctitle">Standard Per-Kg Drug Doses</div>
       <div id="setDrugList"></div>
@@ -216,15 +251,14 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
 </nav>
 
 <script>
-// Drug categories with distinct themes
-const DRUG_CATS = [
-  { name: "Premedication & Anticholinergics", color: "#8b5cf6", bg: "#f5f3ff", drugs: ["Atropine", "Glycopyrollate", "Midazolam"] },
-  { name: "Opioids & Analgesia", color: "#059669", bg: "#ecfdf5", drugs: ["Fentanyl", "Remifentanil"] },
-  { name: "Induction Agents", color: "#ea580c", bg: "#fff7ed", drugs: ["Thiopentone", "Propofol", "Etomidate", "Ketamine"] },
-  { name: "Neuromuscular Blockers", color: "#0284c7", bg: "#f0f9ff", drugs: ["Suxa", "Atracurium", "Vecuronium", "Rocuronium"] },
-  { name: "Non-Opioid Analgesics", color: "#e11d48", bg: "#fff1f2", drugs: ["Paracetamol"] },
-  { name: "Antiemetics & Corticosteroids", color: "#d97706", bg: "#fffbeb", drugs: ["Dexa", "Emeset"] },
-  { name: "Neuromuscular Reversal", color: "#16a34a", bg: "#f0fdf4", drugs: ["Neostigmine", "Glyco_rev", "Sugammadex"] }
+const DEF_CATS = [
+  { id: "premed", name: "Premedication & Anticholinergics", color: "#8b5cf6", bg: "#f5f3ff", drugs: ["Atropine", "Glycopyrollate", "Midazolam"] },
+  { id: "opioid", name: "Opioids & Analgesia", color: "#059669", bg: "#ecfdf5", drugs: ["Fentanyl", "Remifentanil"] },
+  { id: "induction", name: "Induction Agents", color: "#ea580c", bg: "#fff7ed", drugs: ["Thiopentone", "Propofol", "Etomidate", "Ketamine"] },
+  { id: "relaxant", name: "Neuromuscular Blockers", color: "#0284c7", bg: "#f0f9ff", drugs: ["Suxa", "Atracurium", "Vecuronium", "Rocuronium"] },
+  { id: "analgesic", name: "Non-Opioid Analgesics", color: "#e11d48", bg: "#fff1f2", drugs: ["Paracetamol"] },
+  { id: "antiemetic", name: "Antiemetics & Corticosteroids", color: "#d97706", bg: "#fffbeb", drugs: ["Dexa", "Emeset"] },
+  { id: "reversal", name: "Neuromuscular Reversal", color: "#16a34a", bg: "#f0fdf4", drugs: ["Neostigmine", "Glyco_rev", "Sugammadex"] }
 ];
 
 const DEF_DOSES = {
@@ -251,12 +285,13 @@ const DEF_DOSES = {
 
 const DEF_FORMULAS = { uncuffedK: 4.0, cuffedK: 3.5, depthK: 12.0, hrBase: 220 };
 
-let cfgDoses = JSON.parse(localStorage.getItem('pDoses_v3')) || JSON.parse(JSON.stringify(DEF_DOSES));
-let cfgFormulas = JSON.parse(localStorage.getItem('pFormulas_v3')) || Object.assign({}, DEF_FORMULAS);
+let drugCats = JSON.parse(localStorage.getItem('pCats_v4')) || JSON.parse(JSON.stringify(DEF_CATS));
+let cfgDoses = JSON.parse(localStorage.getItem('pDoses_v4')) || JSON.parse(JSON.stringify(DEF_DOSES));
+let cfgFormulas = JSON.parse(localStorage.getItem('pFormulas_v4')) || Object.assign({}, DEF_FORMULAS);
 let selDrugs = new Set();
 let patientType = 'child';
+let patientSex = 'Male';
 
-// Safe DOM Setters
 function sText(id, txt){ const el = document.getElementById(id); if(el) el.innerText = txt; }
 function sHtml(id, h){ const el = document.getElementById(id); if(el) el.innerHTML = h; }
 function sVal(id, v){ const el = document.getElementById(id); if(el) el.value = v; }
@@ -267,6 +302,13 @@ function swTab(tabId, btn){
   const t = document.getElementById(tabId);
   if(t) t.classList.add('active');
   if(btn) btn.classList.add('active');
+}
+
+function setSex(s){
+  patientSex = s;
+  document.getElementById('sexM').className = `pill ${s==='Male'?'sel':''}`;
+  document.getElementById('sexF').className = `pill ${s==='Female'?'sel':''}`;
+  calc();
 }
 
 function setCat(type){
@@ -328,12 +370,12 @@ function buildPillSelector(){
   const c = document.getElementById('pillsContainer');
   if(!c) return;
   c.innerHTML = '';
-  DRUG_CATS.forEach(cat => {
+  drugCats.forEach(cat => {
     const box = document.createElement('div');
     box.className = 'cat-box';
     box.style.background = cat.bg;
     box.style.borderColor = cat.color + '40';
-    box.innerHTML = `<div class="cat-hdr" style="color:${cat.color}">${cat.name}</div><div class="pgrid" id="pgrid_${cat.name.replace(/\s+/g,'')}"></div>`;
+    box.innerHTML = `<div class="cat-hdr" style="color:${cat.color}">${cat.name}</div><div class="pgrid" id="pgrid_${cat.id}"></div>`;
     c.appendChild(box);
 
     const grid = box.querySelector('.pgrid');
@@ -352,8 +394,9 @@ function calc(){
   const { yrs, mos } = getAges();
   const wt = parseFloat(document.getElementById('wt').value) || 0;
 
-  // Header Badge
-  sText('sumBadge', `${patientType==='child' ? (yrs>0?yrs+' yr':'-- yr') : (mos>0?mos+' mo':'-- mo')} | ${wt>0?wt+' kg':'-- kg'}`);
+  // Header Badge includes Sex
+  const sexInitial = patientSex === 'Male' ? 'M' : 'F';
+  sText('sumBadge', `${sexInitial} | ${patientType==='child' ? (yrs>0?yrs+' yr':'-- yr') : (mos>0?mos+' mo':'-- mo')} | ${wt>0?wt+' kg':'-- kg'}`);
 
   // Atropine visibility (< 2 years only)
   const atroPill = document.getElementById('pill_Atropine');
@@ -382,6 +425,11 @@ function calc(){
   calcEmerg(wt);
 }
 
+// 0.5 mm Rounding Helper
+function roundToHalf(val){
+  return (Math.round(val * 2) / 2).toFixed(1);
+}
+
 function calcEquipment(yrs, mos, wt){
   let mask = mos < 1 ? "Sz 00/0" : mos <= 12 ? "Sz 1" : yrs <= 3 ? "Sz 2" : yrs <= 8 ? "Sz 3" : "Sz 4";
   
@@ -395,14 +443,30 @@ function calcEquipment(yrs, mos, wt){
 
   let blade = mos < 1 ? "Miller 0" : mos <= 12 ? "Miller 1" : yrs <= 5 ? "Mac 2 / Miller 1.5" : yrs <= 10 ? "Mac 2-3" : "Mac 3";
 
-  let uncuffed = 0, cuffed = 0, depth = "--";
+  // Tube calculations: 0.5 mm Practical Rounding + Calculated Exact
+  let uncuffedDisplay = "--";
+  let cuffedDisplay = "--";
+  let depth = "--";
+
   if(yrs < 1){
-    uncuffed = mos < 1 ? 3 : 4;
-    cuffed = 3;
-    depth = mos < 1 ? "9.0 cm" : "10.0 cm";
+    if(mos < 1){
+      uncuffedDisplay = `3.0 mm ID (Preterm/Neonate)`;
+      cuffedDisplay = `2.5 - 3.0 mm ID`;
+      depth = "9.0 cm";
+    } else {
+      uncuffedDisplay = `3.5 mm ID (Infant)`;
+      cuffedDisplay = `3.0 mm ID`;
+      depth = "10.0 cm";
+    }
   } else {
-    uncuffed = Math.round((yrs / 4) + cfgFormulas.uncuffedK);
-    cuffed = Math.round((yrs / 4) + cfgFormulas.cuffedK);
+    const rawUncuffed = (yrs / 4) + cfgFormulas.uncuffedK;
+    const rawCuffed = (yrs / 4) + cfgFormulas.cuffedK;
+
+    const roundUncuffed = roundToHalf(rawUncuffed);
+    const roundCuffed = roundToHalf(rawCuffed);
+
+    uncuffedDisplay = `<strong>${roundUncuffed} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawUncuffed.toFixed(2)})</span>`;
+    cuffedDisplay = `<strong>${roundCuffed} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawCuffed.toFixed(2)})</span>`;
     depth = `${((yrs / 2) + cfgFormulas.depthK).toFixed(1)} cm`;
   }
 
@@ -411,8 +475,8 @@ function calcEquipment(yrs, mos, wt){
   sText('eqM', mask);
   sHtml('eqA', o);
   sText('eqB', blade);
-  sText('eqEu', `${uncuffed} mm ID`);
-  sText('eqEc', `${cuffed} mm ID`);
+  sHtml('eqEu', uncuffedDisplay);
+  sHtml('eqEc', cuffedDisplay);
   sText('eqEd', depth);
   sText('eqVt', wt > 0 ? `${Math.round(wt*6)} - ${Math.round(wt*8)} mL` : '--');
   sText('eqRr', mos < 1 ? "40-50" : mos <= 12 ? "30-40" : yrs <= 4 ? "24-30" : yrs <= 10 ? "18-24" : "12-16");
@@ -430,11 +494,10 @@ function renderGA(wt = parseFloat(document.getElementById('wt').value) || 0){
   c.innerHTML = '';
   const { yrs } = getAges();
 
-  DRUG_CATS.forEach(cat => {
+  drugCats.forEach(cat => {
     let drugs = cat.drugs.filter(d => !(d === 'Atropine' && yrs >= 2));
     if(drugs.length === 0) return;
 
-    // Selected drugs first
     const sorted = [...drugs.filter(d => selDrugs.has(d)), ...drugs.filter(d => !selDrugs.has(d))];
 
     const box = document.createElement('div');
@@ -500,7 +563,54 @@ function calcEmerg(wt){
   sText('emSux', `IV: ${(wt*2).toFixed(1)} mg | IM: ${(wt*4).toFixed(1)} mg`);
 }
 
-// Settings Logic
+// Settings: Categories Dropdown & Add Drug
+function populateCategorySelect(){
+  const s = document.getElementById('newDrugCat');
+  if(!s) return;
+  s.innerHTML = '';
+  drugCats.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat.id;
+    opt.innerText = cat.name;
+    s.appendChild(opt);
+  });
+}
+
+function addNewDrug(){
+  const name = document.getElementById('newDrugName').value.trim();
+  const dose = parseFloat(document.getElementById('newDrugDose').value);
+  const unit = document.getElementById('newDrugUnit').value;
+  const catId = document.getElementById('newDrugCat').value;
+
+  if(!name || isNaN(dose) || dose <= 0){
+    alert('Please enter a valid Drug Name and Dose.');
+    return;
+  }
+
+  // Add or update drug in formulary
+  cfgDoses[name] = { d: dose, u: unit };
+
+  // Add drug into selected category array
+  const cat = drugCats.find(c => c.id === catId);
+  if(cat && !cat.drugs.includes(name)){
+    cat.drugs.push(name);
+  }
+
+  // Persist
+  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
+  localStorage.setItem('pCats_v4', JSON.stringify(drugCats));
+
+  // Clear inputs
+  document.getElementById('newDrugName').value = '';
+  document.getElementById('newDrugDose').value = '';
+
+  // Refresh Views
+  buildPillSelector();
+  renderSettings();
+  calc();
+  alert(`${name} added to ${cat.name}!`);
+}
+
 function renderSettings(){
   const c = document.getElementById('setDrugList');
   if(!c) return;
@@ -530,17 +640,20 @@ function saveDoses(){
     const el = document.getElementById(`setInp_${d}`);
     if(el && !isNaN(parseFloat(el.value))) cfgDoses[d].d = parseFloat(el.value);
   });
-  localStorage.setItem('pDoses_v3', JSON.stringify(cfgDoses));
+  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
   calc();
   alert('Drug doses saved and updated across app!');
 }
 
 function restoreDoses(){
   cfgDoses = JSON.parse(JSON.stringify(DEF_DOSES));
-  localStorage.setItem('pDoses_v3', JSON.stringify(cfgDoses));
+  drugCats = JSON.parse(JSON.stringify(DEF_CATS));
+  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
+  localStorage.setItem('pCats_v4', JSON.stringify(drugCats));
+  buildPillSelector();
   renderSettings();
   calc();
-  alert('Default doses restored!');
+  alert('Default formulary restored!');
 }
 
 function saveFormulas(){
@@ -548,14 +661,14 @@ function saveFormulas(){
   cfgFormulas.cuffedK = parseFloat(document.getElementById('fEc').value) || 3.5;
   cfgFormulas.depthK = parseFloat(document.getElementById('fEd').value) || 12.0;
   cfgFormulas.hrBase = parseFloat(document.getElementById('fHr').value) || 220;
-  localStorage.setItem('pFormulas_v3', JSON.stringify(cfgFormulas));
+  localStorage.setItem('pFormulas_v4', JSON.stringify(cfgFormulas));
   calc();
   alert('Equipment & Monitor formulas saved!');
 }
 
 function restoreFormulas(){
   cfgFormulas = Object.assign({}, DEF_FORMULAS);
-  localStorage.setItem('pFormulas_v3', JSON.stringify(cfgFormulas));
+  localStorage.setItem('pFormulas_v4', JSON.stringify(cfgFormulas));
   renderSettings();
   calc();
   alert('Default formulas restored!');
@@ -568,13 +681,13 @@ function saveDoc(){
     d: document.getElementById('dd').value,
     w: document.getElementById('dw').value
   };
-  localStorage.setItem('pDoc_v3', JSON.stringify(prof));
+  localStorage.setItem('pDoc_v4', JSON.stringify(prof));
   updateHeaderDoctor();
   alert('Doctor profile saved!');
 }
 
 function updateHeaderDoctor(){
-  const prof = JSON.parse(localStorage.getItem('pDoc_v3'));
+  const prof = JSON.parse(localStorage.getItem('pDoc_v4'));
   if(prof && prof.n){
     sText('hdrDocName', prof.n);
     const box = document.getElementById('hdrDoc');
@@ -583,7 +696,7 @@ function updateHeaderDoctor(){
 }
 
 function loadDoc(){
-  const prof = JSON.parse(localStorage.getItem('pDoc_v3'));
+  const prof = JSON.parse(localStorage.getItem('pDoc_v4'));
   if(prof){
     sVal('dn', prof.n || '');
     sVal('dr', prof.r || '');
@@ -593,9 +706,9 @@ function loadDoc(){
   updateHeaderDoctor();
 }
 
-// Initial Boot
 window.onload = function(){
   try {
+    populateCategorySelect();
     buildPillSelector();
     loadDoc();
     renderSettings();
