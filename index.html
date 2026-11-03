@@ -1,920 +1,1201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pediatric Anaesthesia Planner</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="theme-color" content="#ffffff">
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #e2e8f0;
-      --primary: #0284c7;
-      --primary-light: #e0f2fe;
-      --text: #0f172a;
-      --muted: #64748b;
-      --danger: #dc2626;
-      --danger-bg: #fef2f2;
-      --danger-border: #fecaca;
-      --nav-h: 62px;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      padding-bottom: calc(var(--nav-h) + 20px);
-    }
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-    }
-    header h1 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-    .badge {
-      font-size: 0.75rem;
-      background: var(--primary-light);
-      border: 1px solid #bae6fd;
-      padding: 4px 10px;
-      border-radius: 12px;
-      color: #0369a1;
-      font-weight: 700;
-    }
-    main {
-      padding: 12px;
-      max-width: 550px;
-      margin: 0 auto;
-    }
-    .tab {
-      display: none;
-    }
-    .tab.active {
-      display: block;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
-    }
-    .ctitle {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--muted);
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .type-toggle {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-    .type-btn {
-      padding: 10px;
-      text-align: center;
-      background: #f1f5f9;
-      border: 1.5px solid var(--border);
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--muted);
-      cursor: pointer;
-    }
-    .type-btn.active {
-      background: var(--primary-light);
-      border-color: var(--primary);
-      color: var(--primary);
-    }
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .ig {
-      margin-bottom: 10px;
-    }
-    label {
-      display: block;
-      font-size: 0.78rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-      color: #334155;
-    }
-    input {
-      width: 100%;
-      background: #f8fafc;
-      border: 1.5px solid var(--border);
-      color: var(--text);
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      outline: none;
-    }
-    input:focus {
-      border-color: var(--primary);
-      background: #ffffff;
-    }
-    .btn-sm {
-      background: #0284c7;
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .pgroup {
-      padding-bottom: 10px;
-      margin-bottom: 10px;
-      border-bottom: 1px dashed var(--border);
-    }
-    .pgroup:last-child {
-      border: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .pgrid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 7px;
-    }
-    .pill {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #334155;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      user-select: none;
-      font-weight: 500;
-    }
-    .pill.sel {
-      background: var(--primary);
-      border-color: var(--primary);
-      color: #ffffff;
-      font-weight: 700;
-      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 9px 0;
-      border-bottom: 1px solid #f1f5f9;
-    }
-    .row:last-child {
-      border-bottom: none;
-    }
-    .lbl {
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .val {
-      font-size: 0.92rem;
-      font-weight: 700;
-      color: var(--text);
-      text-align: right;
-    }
-    .badge-c {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      margin-left: 6px;
-      border: 1px solid rgba(0,0,0,0.1);
-    }
-    .dcard {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
-      border-left: 4px solid #cbd5e1;
-    }
-    .dcard.sel {
-      border-left-color: var(--primary);
-      background: #f0f9ff;
-    }
-    .dhdr {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .dname {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-    .ddose {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-    .dsub {
-      font-size: 0.72rem;
-      color: var(--muted);
-      margin-top: 3px;
-    }
-    .emg {
-      border-left: 4px solid var(--danger);
-      background: var(--danger-bg);
-      border: 1px solid var(--danger-border);
-      border-left-width: 4px;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
-    }
-    .emg-hdr {
-      display: flex;
-      justify-content: space-between;
-      color: var(--danger);
-      font-weight: 700;
-      font-size: 0.88rem;
-    }
-    .emg-body {
-      color: #7f1d1d;
-      font-size: 0.78rem;
-      margin-top: 5px;
-      line-height: 1.4;
-    }
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: var(--nav-h);
-      background: #ffffff;
-      border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      z-index: 100;
-      box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
-      padding-bottom: env(safe-area-inset-bottom, 0);
-    }
-    .nbtn {
-      background: none;
-      border: none;
-      color: var(--muted);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.62rem;
-      font-weight: 700;
-      gap: 3px;
-      cursor: pointer;
-    }
-    .nbtn.active {
-      color: var(--primary);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Pediatric Anaesthesia Planner</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<style>
+:root {
+--bg: #f1f5f9;
+--card: #ffffff;
+--border: #e2e8f0;
+--border-focus: #0284c7;
+--txt-main: #0f172a;
+--txt-muted: #64748b;
+--primary: #0284c7;
+--primary-dark: #0369a1;
+--primary-light: #e0f2fe;
+/* Colorful Category Accents */
+--cat-premed: #8b5cf6;
+--cat-premed-bg: #f5f3ff;
+--cat-premed-border: #ddd6fe;
+--cat-opioid: #0d9488;
+--cat-opioid-bg: #f0fdfa;
+--cat-opioid-border: #99f6e4;
+--cat-induction: #ea580c;
+--cat-induction-bg: #fff7ed;
+--cat-induction-border: #fed7aa;
+--cat-nmba: #2563eb;
+--cat-nmba-bg: #eff6ff;
+--cat-nmba-border: #bfdbfe;
+--cat-analgesic: #e11d48;
+--cat-analgesic-bg: #fff1f2;
+--cat-analgesic-border: #fecdd3;
+--cat-adjunct: #d97706;
+--cat-adjunct-bg: #fffbeb;
+--cat-adjunct-border: #fde68a;
+--cat-reversal: #059669;
+--cat-reversal-bg: #ecfdf5;
+--cat-reversal-border: #a7f3d0;
+--danger: #dc2626;
+--danger-bg: #fef2f2;
+--danger-border: #fecaca;
+--nav-h: 64px;
+}
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+-webkit-tap-highlight-color: transparent;
+}
+body {
+background: var(--bg);
+color: var(--txt-main);
+min-height: 100vh;
+padding-bottom: calc(var(--nav-h) + 24px);
+}
+/* Top Sticky Header */
+header {
+background: #ffffff;
+border-bottom: 2px solid #e2e8f0;
+padding: 10px 14px;
+position: sticky;
+top: 0;
+z-index: 50;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: 0 2px 4px rgba(15, 23, 42, 0.04);
+}
+.brand-wrap {
+display: flex;
+flex-direction: column;
+}
+.brand-wrap h1 {
+font-size: 0.95rem;
+font-weight: 800;
+color: var(--primary-dark);
+letter-spacing: -0.2px;
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.doc-badge-header {
+font-size: 0.72rem;
+font-weight: 700;
+color: #059669;
+display: none;
+align-items: center;
+gap: 3px;
+margin-top: 1px;
+}
+.badge-summary {
+font-size: 0.74rem;
+background: var(--primary-light);
+border: 1.5px solid #bae6fd;
+padding: 4px 10px;
+border-radius: 999px;
+color: var(--primary-dark);
+font-weight: 700;
+white-space: nowrap;
+}
+main {
+padding: 12px;
+max-width: 580px;
+margin: 0 auto;
+}
+.tab {
+display: none;
+}
+.tab.active {
+display: block;
+animation: fadeIn 0.15s ease-out;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(4px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 14px;
+padding: 14px;
+margin-bottom: 12px;
+box-shadow: 0 2px 5px rgba(15, 23, 42, 0.03);
+}
+.ctitle {
+font-size: 0.78rem;
+font-weight: 800;
+color: var(--txt-muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-bottom: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.type-toggle {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-bottom: 12px;
+}
+.type-btn {
+padding: 11px 8px;
+text-align: center;
+background: #f8fafc;
+border: 2px solid var(--border);
+border-radius: 10px;
+font-size: 0.84rem;
+font-weight: 800;
+color: var(--txt-muted);
+cursor: pointer;
+transition: all 0.15s ease;
+}
+.type-btn.active {
+background: #e0f2fe;
+border-color: #0284c7;
+color: #0284c7;
+box-shadow: 0 2px 4px rgba(2, 132, 199, 0.15);
+}
+.g2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+.ig {
+margin-bottom: 10px;
+}
+label {
+display: block;
+font-size: 0.76rem;
+font-weight: 700;
+margin-bottom: 4px;
+color: #334155;
+}
+input {
+width: 100%;
+background: #f8fafc;
+border: 1.5px solid var(--border);
+color: var(--txt-main);
+padding: 9px 12px;
+border-radius: 8px;
+font-size: 0.95rem;
+outline: none;
+transition: border-color 0.15s;
+}
+input:focus {
+border-color: var(--border-focus);
+background: #ffffff;
+box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+.btn-sm {
+background: var(--primary);
+color: #fff;
+border: none;
+padding: 5px 10px;
+border-radius: 6px;
+font-size: 0.72rem;
+font-weight: 700;
+cursor: pointer;
+}
+/* Drug Category Blocks (Tab 1 & Tab 3) */
+.cat-section {
+border-radius: 12px;
+padding: 12px;
+margin-bottom: 12px;
+border: 1.5px solid;
+}
+.cat-hdr {
+display: flex;
+align-items: center;
+gap: 6px;
+font-size: 0.75rem;
+font-weight: 800;
+text-transform: uppercase;
+letter-spacing: 0.4px;
+margin-bottom: 8px;
+}
+.cat-dot {
+width: 9px;
+height: 9px;
+border-radius: 50%;
+}
+/* Tab 1 Pills */
+.pill-grid {
+display: flex;
+flex-wrap: wrap;
+gap: 7px;
+}
+.pill {
+background: #ffffff;
+border: 1.5px solid var(--border);
+color: #334155;
+padding: 7px 12px;
+border-radius: 20px;
+font-size: 0.8rem;
+font-weight: 600;
+cursor: pointer;
+user-select: none;
+box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+transition: all 0.15s ease;
+}
+.pill.sel {
+background: var(--primary);
+border-color: var(--primary-dark);
+color: #ffffff;
+font-weight: 800;
+box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+}
+/* Equipment Rows */
+.output-item {
+padding: 10px 0;
+border-bottom: 1px solid #f1f5f9;
+}
+.output-item:last-child {
+border-bottom: none;
+}
+.output-hdr {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+}
+.output-label {
+font-size: 0.82rem;
+font-weight: 700;
+color: var(--txt-muted);
+}
+.output-val {
+font-size: 0.95rem;
+font-weight: 800;
+color: var(--txt-main);
+text-align: right;
+}
+.formula-tag {
+display: inline-block;
+font-size: 0.7rem;
+color: #0369a1;
+background: #e0f2fe;
+border: 1px solid #bae6fd;
+padding: 2px 6px;
+border-radius: 4px;
+margin-top: 4px;
+font-weight: 600;
+}
+.badge-c {
+display: inline-block;
+padding: 2px 8px;
+border-radius: 4px;
+font-size: 0.74rem;
+font-weight: 800;
+margin-left: 6px;
+border: 1px solid rgba(0,0,0,0.08);
+}
+/* Tab 3 GA Drug Cards */
+.ga-card {
+background: #ffffff;
+border: 1.5px solid var(--border);
+border-radius: 10px;
+padding: 10px 12px;
+margin-bottom: 8px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+border-left-width: 5px;
+}
+.ga-card.selected {
+background: #f0f9ff;
+border-color: #bae6fd;
+border-left-color: var(--primary) !important;
+box-shadow: 0 2px 5px rgba(2, 132, 199, 0.12);
+}
+.ga-top {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+}
+.ga-name {
+font-size: 0.88rem;
+font-weight: 800;
+color: var(--txt-main);
+display: flex;
+align-items: center;
+gap: 5px;
+}
+.ga-dose {
+font-size: 1.05rem;
+font-weight: 900;
+color: var(--primary-dark);
+}
+.ga-sub {
+font-size: 0.72rem;
+color: var(--txt-muted);
+margin-top: 2px;
+display: flex;
+justify-content: space-between;
+}
+/* Emergency Tab */
+.emg-card {
+border: 1.5px solid var(--danger-border);
+border-left-width: 5px;
+border-left-color: var(--danger);
+background: var(--danger-bg);
+border-radius: 10px;
+padding: 12px;
+margin-bottom: 10px;
+}
+.emg-title {
+display: flex;
+justify-content: space-between;
+color: var(--danger);
+font-weight: 800;
+font-size: 0.88rem;
+}
+.emg-desc {
+color: #991b1b;
+font-size: 0.76rem;
+margin-top: 5px;
+line-height: 1.45;
+}
+/* Settings Buttons */
+.btn-action-group {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-top: 12px;
+}
+.btn-save {
+background: #0284c7;
+color: #fff;
+border: none;
+padding: 10px;
+border-radius: 8px;
+font-size: 0.8rem;
+font-weight: 800;
+cursor: pointer;
+}
+.btn-restore {
+background: #f1f5f9;
+color: #475569;
+border: 1.5px solid #cbd5e1;
+padding: 10px;
+border-radius: 8px;
+font-size: 0.8rem;
+font-weight: 800;
+cursor: pointer;
+}
+/* Bottom Navigation */
+nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+height: var(--nav-h);
+background: #ffffff;
+border-top: 2px solid var(--border);
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+z-index: 100;
+box-shadow: 0 -2px 6px rgba(0,0,0,0.04);
+padding-bottom: env(safe-area-inset-bottom, 0);
+}
+.nbtn {
+background: none;
+border: none;
+color: var(--txt-muted);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+font-size: 0.62rem;
+font-weight: 700;
+gap: 3px;
+cursor: pointer;
+}
+.nbtn.active {
+color: var(--primary);
+}
+</style>
 </head>
 <body>
-
+<!-- TOP HEADER -->
 <header>
-  <h1>Pediatric Anaesthesia Planner</h1>
-  <div id="sumBadge" class="badge">--</div>
+<div class="brand-wrap">
+<h1>👶 Pedi Anaesthesia Planner</h1>
+<div id="headerDocName" class="doc-badge-header">👨‍⚕️ <span id="headerDocText">Dr. Name</span></div>
+</div>
+<div id="sumBadge" class="badge-summary">Child | -- kg</div>
 </header>
-
 <main>
-  <!-- TAB 1: INPUTS -->
-  <section id="t1" class="tab active">
-    <div class="card">
-      <div class="ctitle">Patient Category</div>
-      <div class="type-toggle">
-        <button type="button" class="type-btn active" id="btnTypeChild" onclick="setPatientType('child')">1. Child</button>
-        <button type="button" class="type-btn" id="btnTypeInfant" onclick="setPatientType('infant')">2. Infant / Neonate</button>
-      </div>
-
-      <!-- Child: Age in Years -->
-      <div id="boxYears" class="ig">
-        <label for="ay">Age (Years)</label>
-        <input type="number" id="ay" min="1" max="18" step="0.5" placeholder="e.g. 5">
-      </div>
-
-      <!-- Infant/Neonate: Months & Corrected Age -->
-      <div id="boxMonths" style="display: none;">
-        <div class="ig">
-          <label for="am">Age (Months)</label>
-          <input type="number" id="am" min="0" max="24" step="0.5" placeholder="e.g. 6">
-        </div>
-        <div style="background:#f0f9ff; border:1px dashed #38bdf8; padding:10px; border-radius:8px; margin-bottom:10px;">
-          <div style="font-size:0.75rem; font-weight:700; color:var(--primary); margin-bottom:6px;">Prematurity Correction</div>
-          <div class="g2">
-            <div>
-              <label for="ga" style="font-size:0.7rem;">GA at birth (wks)</label>
-              <input type="number" id="ga" min="24" max="40" placeholder="e.g. 32">
-            </div>
-            <div>
-              <label style="font-size:0.7rem;">Corrected Age</label>
-              <div id="corrTxt" style="font-size:0.8rem; font-weight:700; color:#0369a1; padding-top:10px;">--</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Weight -->
-      <div class="ig">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <label for="wt">Weight (kg)</label>
-          <button class="btn-sm" type="button" onclick="estimateWeight()">Estimate Wt</button>
-        </div>
-        <input type="number" id="wt" min="0.5" max="100" step="0.1" placeholder="Enter weight in kg">
-      </div>
-    </div>
-
-    <!-- Available Drugs Pills -->
-    <div class="card">
-      <div class="ctitle">Available Drugs</div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" id="p-atro" style="display:none;" onclick="togglePill(this, 'Atropine')">Atropine</div>
-          <div class="pill" onclick="togglePill(this, 'Glycopyrollate')">Glycopyrollate</div>
-          <div class="pill" onclick="togglePill(this, 'Midazolam')">Midazolam</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Fentanyl')">Fentanyl</div>
-          <div class="pill" onclick="togglePill(this, 'Remifentanil')">remifentanyl</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Thiopentone')">Thiopentone</div>
-          <div class="pill" onclick="togglePill(this, 'Propofol')">Propofol</div>
-          <div class="pill" onclick="togglePill(this, 'Etomidate')">Etomidate</div>
-          <div class="pill" onclick="togglePill(this, 'Ketamine')">Ketamine</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Suxa')">Suxa</div>
-          <div class="pill" onclick="togglePill(this, 'Atracurium')">Atracurium</div>
-          <div class="pill" onclick="togglePill(this, 'Vecuronium')">vecuronium</div>
-          <div class="pill" onclick="togglePill(this, 'Rocuronium')">Rocuronium</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Paracetamol')">Paracetamol</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Dexa')">Dexa</div>
-          <div class="pill" onclick="togglePill(this, 'Emeset')">Emeset</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Neostigmine')">Neostigmine</div>
-          <div class="pill" onclick="togglePill(this, 'Glyco_rev')">Glycopyrollate (Rev)</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" onclick="togglePill(this, 'Sugammadex')">Sugammadex</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 2: EQUIPMENT -->
-  <section id="t2" class="tab">
-    <div class="card">
-      <div class="ctitle">Airway Equipment</div>
-      <div class="row"><span class="lbl">Face Mask Size</span><span class="val" id="eqM">--</span></div>
-      <div class="row"><span class="lbl">Airway (OPA) Size & Flange</span><span class="val" id="eqA">--</span></div>
-      <div class="row"><span class="lbl">Laryngoscope Blade</span><span class="val" id="eqB">--</span></div>
-      <div class="row"><span class="lbl">ETT Uncuffed (Whole ID)</span><span class="val" id="eqEu" style="color:var(--primary); font-size:1.05rem;">--</span></div>
-      <div class="row"><span class="lbl">ETT Cuffed (Whole ID)</span><span class="val" id="eqEc" style="color:var(--primary); font-size:1.05rem;">--</span></div>
-      <div class="row"><span class="lbl">ETT Depth (Oral Lip)</span><span class="val" id="eqEd">--</span></div>
-    </div>
-    <div class="card">
-      <div class="ctitle">Ventilator & Monitor</div>
-      <div class="row"><span class="lbl">VT (6 - 8 mL/kg)</span><span class="val" id="eqVt">--</span></div>
-      <div class="row"><span class="lbl">Respiratory Rate (bpm)</span><span class="val" id="eqRr">--</span></div>
-      <div class="row"><span class="lbl">HR Max (Threshold)</span><span class="val" id="eqHr">--</span></div>
-    </div>
-  </section>
-
-  <!-- TAB 3: GA DRUGS -->
-  <section id="t3" class="tab">
-    <div class="ctitle" style="margin:4px 4px 10px;">GA Drugs & Doses (Selected First)</div>
-    <div id="gaList"></div>
-  </section>
-
-  <!-- TAB 4: LOCAL -->
-  <section id="t4" class="tab">
-    <div class="card">
-      <div class="ctitle">Local Anaesthesia Infiltration & IV</div>
-      <div class="row">
-        <div><div class="lbl" style="color:var(--text); font-weight:700;">Loxicard IV (2%)</div><small style="color:var(--muted);">1.5 mg/kg</small></div>
-        <div class="val" id="laLox">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:var(--text); font-weight:700;">Lignocaine Plain</div><small style="color:var(--muted);">Max 4 mg/kg</small></div>
-        <div class="val" id="laPl">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:var(--text); font-weight:700;">Lignocaine + Adrenaline</div><small style="color:var(--muted);">Max 7 mg/kg</small></div>
-        <div class="val" id="laAd">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:var(--text); font-weight:700;">Bupivacaine (Max)</div><small style="color:var(--muted);">Max 2.0 mg/kg</small></div>
-        <div class="val" id="laBup">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:var(--text); font-weight:700;">Ropivacaine (Max)</div><small style="color:var(--muted);">Max 2.5 mg/kg</small></div>
-        <div class="val" id="laRop">--</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ctitle">Caudal Block (0.25% Bupivacaine)</div>
-      <div class="row"><div><div class="lbl">Lumbosacral</div><small style="color:var(--muted);">0.5 mL/kg</small></div><div class="val" id="cL">--</div></div>
-      <div class="row"><div><div class="lbl">Thoracolumbar</div><small style="color:var(--muted);">1.0 mL/kg</small></div><div class="val" id="cT">--</div></div>
-      <div class="row"><div><div class="lbl">Mid-Thoracic</div><small style="color:var(--muted);">1.25 mL/kg (max 20 mL)</small></div><div class="val" id="cM">--</div></div>
-    </div>
-  </section>
-
-  <!-- TAB 5: EMERGENCY -->
-  <section id="t5" class="tab">
-    <div class="ctitle" style="color:var(--danger); margin:4px 4px 10px;">Emergency Resuscitation</div>
-    <div class="emg">
-      <div class="emg-hdr"><span>Adrenaline (1:10,000)</span><span id="emAdr">--</span></div>
-      <div class="emg-body">10 mcg/kg IV (0.1 mL/kg of 1:10,000 dilution). Dilute 1 mL (1:1000) in 9 mL NS.</div>
-    </div>
-    <div class="emg">
-      <div class="emg-hdr"><span>Atropine</span><span id="emAtr">--</span></div>
-      <div class="emg-body">0.02 mg/kg IV (Min: 0.1 mg, Max: 0.5 mg).</div>
-    </div>
-    <div class="emg">
-      <div class="emg-hdr"><span>Ephedrine</span><span id="emEph">--</span></div>
-      <div class="emg-body">0.1 - 0.2 mg/kg IV. Dilute 30 mg ampoule in 9 mL NS (3 mg/mL).</div>
-    </div>
-    <div class="emg">
-      <div class="emg-hdr"><span>Hydrocortisone</span><span id="emHyd">--</span></div>
-      <div class="emg-body">2 - 4 mg/kg IV (Asthma, Anaphylaxis, Stress dose).</div>
-    </div>
-    <div class="emg">
-      <div class="emg-hdr"><span>Succinylcholine (Laryngospasm)</span><span id="emSux">--</span></div>
-      <div class="emg-body">IV: 1 - 2 mg/kg | IM: 3 - 4 mg/kg (with Atropine 0.02 mg/kg).</div>
-    </div>
-  </section>
-
-  <!-- TAB 6: SETTINGS -->
-  <section id="t6" class="tab">
-    <div class="card">
-      <div class="ctitle">Doctor Profile</div>
-      <div class="ig"><label for="dn">Doctor Name</label><input type="text" id="dn" placeholder="Dr. Naveenkumar S."></div>
-      <div class="ig"><label for="dr">Registration No.</label><input type="text" id="dr" placeholder="TNMC Registration Number"></div>
-      <div class="g2">
-        <div class="ig"><label for="dd">Designation</label><input type="text" id="dd" placeholder="Anaesthesiologist"></div>
-        <div class="ig"><label for="dw">Workplace</label><input type="text" id="dw" placeholder="Hospital / Medical College"></div>
-      </div>
-      <button class="btn-sm" style="width:100%; padding:10px;" type="button" onclick="saveDoctorProfile()">Save Profile</button>
-    </div>
-    <div class="card">
-      <div class="ctitle">Standard Per-Kg Drug Doses</div>
-      <div id="setList"></div>
-    </div>
-    <div style="font-size:0.75rem; color:#854d0e; background:#fefce8; border:1px solid #fef08a; padding:10px; border-radius:8px; line-height:1.4;">
-      <strong>DISCLAIMER:</strong> This tool is intended for cognitive assistance and intraoperative planning only. Doses must be correlated with standard clinical guidelines.
-    </div>
-  </section>
+<!-- TAB 1: INPUTS -->
+<section id="t1" class="tab active">
+<div class="card">
+<div class="ctitle">Patient Classification</div>
+<div class="type-toggle">
+<button type="button" class="type-btn active" id="btnTypeChild" onclick="setPatientType('child')">1. Child</button>
+<button type="button" class="type-btn" id="btnTypeInfant" onclick="setPatientType('infant')">2. Infant / Neonate</button>
+</div>
+<!-- Child Age Input -->
+<div id="boxYears" class="ig">
+<label for="ay">Age (Years)</label>
+<input type="number" id="ay" min="1" max="18" step="0.5" placeholder="e.g. 4">
+</div>
+<!-- Infant / Neonate Age & Prematurity Inputs -->
+<div id="boxMonths" style="display: none;">
+<div class="ig">
+<label for="am">Age (Months)</label>
+<input type="number" id="am" min="0" max="24" step="0.5" placeholder="e.g. 6 (0 - 24 months)">
+</div>
+<div style="background:#eff6ff; border:1.5px dashed #93c5fd; padding:10px; border-radius:10px; margin-bottom:12px;">
+<div style="font-size:0.75rem; font-weight:800; color:#1d4ed8; margin-bottom:6px;">Prematurity Correction Calculator</div>
+<div class="g2">
+<div>
+<label for="ga" style="font-size:0.7rem; color:#1e3a8a;">GA at birth (weeks)</label>
+<input type="number" id="ga" min="24" max="40" placeholder="e.g. 32">
+</div>
+<div>
+<label style="font-size:0.7rem; color:#1e3a8a;">Corrected Age</label>
+<div id="corrTxt" style="font-size:0.82rem; font-weight:800; color:#1d4ed8; padding-top:10px;">--</div>
+</div>
+</div>
+<div style="font-size:0.68rem; color:#64748b; margin-top:4px;">Formula: Chronological age - (40 - GA at birth)</div>
+</div>
+</div>
+<!-- Weight -->
+<div class="ig">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+<label for="wt" style="margin:0;">Weight (kg)</label>
+<button class="btn-sm" type="button" onclick="estimateWeight()">Estimate Wt</button>
+</div>
+<input type="number" id="wt" min="0.5" max="100" step="0.1" placeholder="Enter weight in kg">
+</div>
+</div>
+<!-- Category-wise Drug Selection Pills -->
+<div class="card">
+<div class="ctitle">Select Available Drugs (Tab 1)</div>
+<!-- Premeds / Anticholinergics -->
+<div class="cat-section" style="background:var(--cat-premed-bg); border-color:var(--cat-premed-border);">
+<div class="cat-hdr" style="color:var(--cat-premed);"><span class="cat-dot" style="background:var(--cat-premed);"></span> Premedication & Anticholinergics</div>
+<div class="pill-grid">
+<div class="pill" id="p-atro" style="display:none;" onclick="togglePill(this, 'Atropine')">Atropine</div>
+<div class="pill" onclick="togglePill(this, 'Glycopyrollate')">Glycopyrollate</div>
+<div class="pill" onclick="togglePill(this, 'Midazolam')">Midazolam</div>
+</div>
+</div>
+<!-- Opioids -->
+<div class="cat-section" style="background:var(--cat-opioid-bg); border-color:var(--cat-opioid-border);">
+<div class="cat-hdr" style="color:var(--cat-opioid);"><span class="cat-dot" style="background:var(--cat-opioid);"></span> Opioids & Analgesia</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Fentanyl')">Fentanyl</div>
+<div class="pill" onclick="togglePill(this, 'Remifentanil')">remifentanyl</div>
+</div>
+</div>
+<!-- Induction Agents -->
+<div class="cat-section" style="background:var(--cat-induction-bg); border-color:var(--cat-induction-border);">
+<div class="cat-hdr" style="color:var(--cat-induction);"><span class="cat-dot" style="background:var(--cat-induction);"></span> Induction Agents</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Propofol')">Propofol</div>
+<div class="pill" onclick="togglePill(this, 'Thiopentone')">Thiopentone</div>
+<div class="pill" onclick="togglePill(this, 'Ketamine')">Ketamine</div>
+<div class="pill" onclick="togglePill(this, 'Etomidate')">Etomidate</div>
+</div>
+</div>
+<!-- Neuromuscular Blockers -->
+<div class="cat-section" style="background:var(--cat-nmba-bg); border-color:var(--cat-nmba-border);">
+<div class="cat-hdr" style="color:var(--cat-nmba);"><span class="cat-dot" style="background:var(--cat-nmba);"></span> Neuromuscular Blockers</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Suxa')">Suxa</div>
+<div class="pill" onclick="togglePill(this, 'Atracurium')">Atracurium</div>
+<div class="pill" onclick="togglePill(this, 'Vecuronium')">vecuronium</div>
+<div class="pill" onclick="togglePill(this, 'Rocuronium')">Rocuronium</div>
+</div>
+</div>
+<!-- Analgesics (PCM) -->
+<div class="cat-section" style="background:var(--cat-analgesic-bg); border-color:var(--cat-analgesic-border);">
+<div class="cat-hdr" style="color:var(--cat-analgesic);"><span class="cat-dot" style="background:var(--cat-analgesic);"></span> Antipyretic & Non-Opioid</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Paracetamol')">Paracetamol</div>
+</div>
+</div>
+<!-- Antiemetic / Steroids -->
+<div class="cat-section" style="background:var(--cat-adjunct-bg); border-color:var(--cat-adjunct-border);">
+<div class="cat-hdr" style="color:var(--cat-adjunct);"><span class="cat-dot" style="background:var(--cat-adjunct);"></span> Antiemetics & Corticosteroids</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Dexa')">Dexa</div>
+<div class="pill" onclick="togglePill(this, 'Emeset')">Emeset</div>
+</div>
+</div>
+<!-- Reversals -->
+<div class="cat-section" style="background:var(--cat-reversal-bg); border-color:var(--cat-reversal-border);">
+<div class="cat-hdr" style="color:var(--cat-reversal);"><span class="cat-dot" style="background:var(--cat-reversal);"></span> Neuromuscular Reversal</div>
+<div class="pill-grid">
+<div class="pill" onclick="togglePill(this, 'Neostigmine')">Neostigmine</div>
+<div class="pill" onclick="togglePill(this, 'Glyco_rev')">Glycopyrollate (Rev)</div>
+<div class="pill" onclick="togglePill(this, 'Sugammadex')">Sugammadex</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TAB 2: EQUIPMENT SETTINGS -->
+<section id="t2" class="tab">
+<div class="card">
+<div class="ctitle">Airway Equipment & Sizing</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">Face Mask Size</span><span class="output-val" id="eqM">--</span></div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">Airway (OPA) Size & Flange</span><span class="output-val" id="eqA">--</span></div>
+<div class="formula-tag">ISO standard length & flange color code</div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">Laryngoscope Blade</span><span class="output-val" id="eqB">--</span></div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">ETT Uncuffed (Whole ID)</span><span class="output-val" id="eqEu" style="color:#0284c7; font-size:1.05rem;">--</span></div>
+<div class="formula-tag">Formula: (Age / 4) + 4 mm</div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">ETT Cuffed (Whole ID)</span><span class="output-val" id="eqEc" style="color:#0284c7; font-size:1.05rem;">--</span></div>
+<div class="formula-tag">Formula: (Age / 4) + 3.5 mm (or uncuffed - 0.5)</div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">ETT Depth (Oral Lip)</span><span class="output-val" id="eqEd">--</span></div>
+<div class="formula-tag">Formula: (Age / 2) + 12 cm [or 3 × ETT ID]</div>
+</div>
+</div>
+<div class="card">
+<div class="ctitle">Ventilator Settings</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">Tidal Volume (VT)</span><span class="output-val" id="eqVt">--</span></div>
+<div class="formula-tag">Formula: 6 - 8 mL/kg</div>
+</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">Respiratory Rate (RR)</span><span class="output-val" id="eqRr">--</span></div>
+<div class="formula-tag">Age-based normal resting frequency</div>
+</div>
+</div>
+<div class="card">
+<div class="ctitle">Monitor Settings</div>
+<div class="output-item">
+<div class="output-hdr"><span class="output-label">HR Max (Upper Alert Limit)</span><span class="output-val" id="eqHr">--</span></div>
+<div class="formula-tag">Formula: 220 - Age in years (Pediatric upper physiological bound)</div>
+</div>
+</div>
+</section>
+<!-- TAB 3: GA DRUGS & DOSES -->
+<section id="t3" class="tab">
+<div class="ctitle" style="margin:4px 4px 10px;">GA Drugs & Calculated Doses (Selected First)</div>
+<div id="gaContainer"></div>
+</section>
+<!-- TAB 4: LOCAL ANAESTHETIC DOSES -->
+<section id="t4" class="tab">
+<div class="card">
+<div class="ctitle">Local Anaesthetic Maximum Doses</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:800; font-size:0.88rem;">Loxicard IV (2%)</div><small style="color:var(--txt-muted);">1.5 mg/kg (airway reflex attenuation)</small></div>
+<div class="output-val" id="laLox">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:800; font-size:0.88rem;">Lignocaine Plain (Max)</div><small style="color:var(--txt-muted);">Formula: 4.0 mg/kg</small></div>
+<div class="output-val" id="laPl">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:800; font-size:0.88rem;">Lignocaine + Adrenaline (Max)</div><small style="color:var(--txt-muted);">Formula: 7.0 mg/kg</small></div>
+<div class="output-val" id="laAd">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:800; font-size:0.88rem;">Bupivacaine Max (Plain)</div><small style="color:var(--txt-muted);">Formula: 2.0 mg/kg</small></div>
+<div class="output-val" id="laBup">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:800; font-size:0.88rem;">Ropivacaine Max</div><small style="color:var(--txt-muted);">Formula: 2.5 mg/kg</small></div>
+<div class="output-val" id="laRop">--</div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="ctitle">Caudal Epidural Block (0.25% Bupivacaine)</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:700;">Lumbosacral (Sacral block)</div><small style="color:var(--txt-muted);">Formula: 0.5 mL/kg</small></div>
+<div class="output-val" id="cL">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:700;">Thoracolumbar (Hernia / Orchiopexy)</div><small style="color:var(--txt-muted);">Formula: 1.0 mL/kg (max 20 mL)</small></div>
+<div class="output-val" id="cT">--</div>
+</div>
+</div>
+<div class="output-item">
+<div class="output-hdr">
+<div><div style="font-weight:700;">Mid-Thoracic Block</div><small style="color:var(--txt-muted);">Formula: 1.25 mL/kg (max 20 mL capped)</small></div>
+<div class="output-val" id="cM">--</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TAB 5: EMERGENCY DRUGS -->
+<section id="t5" class="tab">
+<div class="ctitle" style="color:var(--danger); margin:4px 4px 10px;">Emergency Crisis Protocols</div>
+<div class="emg-card">
+<div class="emg-title"><span>Adrenaline (Epinephrine 1:10,000)</span><span id="emAdr">--</span></div>
+<div class="emg-desc"><strong>Cardiac Arrest:</strong> 10 mcg/kg IV (0.1 mL/kg of 1:10,000).
+<em>Dilution:</em> 1 mL of 1:1,000 in 9 mL NS = 100 mcg/mL.</div>
+</div>
+<div class="emg-card">
+<div class="emg-title"><span>Atropine (Bradycardia)</span><span id="emAtr">--</span></div>
+<div class="emg-desc"><strong>Dose:</strong> 0.02 mg/kg IV (Minimum dose: 0.1 mg to prevent paradoxical bradycardia; Max single: 0.5 mg).</div>
+</div>
+<div class="emg-card">
+<div class="emg-title"><span>Ephedrine (Hypotension)</span><span id="emEph">--</span></div>
+<div class="emg-desc"><strong>Dose:</strong> 0.1 - 0.2 mg/kg IV.
+<em>Dilution:</em> 30 mg ampoule in 9 mL NS = 3 mg/mL.</div>
+</div>
+<div class="emg-card">
+<div class="emg-title"><span>Hydrocortisone</span><span id="emHyd">--</span></div>
+<div class="emg-desc"><strong>Dose:</strong> 2 - 4 mg/kg IV for acute status asthmaticus, anaphylaxis, or perioperative stress cover.</div>
+</div>
+<div class="emg-card">
+<div class="emg-title"><span>Succinylcholine (Laryngospasm)</span><span id="emSux">--</span></div>
+<div class="emg-desc"><strong>IV Dose:</strong> 1 - 2 mg/kg IV.
+<strong>IM Dose (no IV access):</strong> 3 - 4 mg/kg IM (always administer with Atropine 0.02 mg/kg).</div>
+</div>
+</section>
+<!-- TAB 6: SETTINGS -->
+<section id="t6" class="tab">
+<!-- Doctor Profile -->
+<div class="card">
+<div class="ctitle">Doctor Profile</div>
+<div class="ig"><label for="dn">Doctor Name</label><input type="text" id="dn" placeholder="Dr. Naveenkumar S."></div>
+<div class="ig"><label for="dr">Registration No.</label><input type="text" id="dr" placeholder="e.g. TNMC-XXXXX"></div>
+<div class="g2">
+<div class="ig"><label for="dd">Designation</label><input type="text" id="dd" placeholder="Anaesthesiologist"></div>
+<div class="ig"><label for="dw">Workplace</label><input type="text" id="dw" placeholder="Hospital / Medical College"></div>
+</div>
+<button class="btn-save" style="width:100%; margin-top:4px;" type="button" onclick="saveDoctorProfile()">Save Profile</button>
+</div>
+<!-- Editable Drug Formularies -->
+<div class="card">
+<div class="ctitle">
+<span>Formulary Doses (Per kg)</span>
+<span style="font-size:0.68rem; color:var(--primary); font-weight:700;">Editable</span>
+</div>
+<div id="settingsDoseContainer"></div>
+<div class="btn-action-group">
+<button class="btn-save" type="button" onclick="saveAllDoseSettings()">💾 Save Drug Doses</button>
+<button class="btn-restore" type="button" onclick="restoreDefaultDoses()">↺ Restore Default Doses</button>
+</div>
+</div>
+<!-- Clinical Formulas Showcase & Customization -->
+<div class="card">
+<div class="ctitle">
+<span>Clinical Equipment & Monitor Formulas</span>
+<span style="font-size:0.68rem; color:var(--primary); font-weight:700;">Editable</span>
+</div>
+<div style="font-size:0.75rem; color:var(--txt-muted); margin-bottom:10px;">
+Adjust the constants used in the equipment formulas below:
+</div>
+<div class="ig">
+<label>ETT Uncuffed Base Constant (Age/4 + constant)</label>
+<input type="number" step="0.1" id="f_uncuffed" value="4.0">
+</div>
+<div class="ig">
+<label>ETT Cuffed Base Constant (Age/4 + constant)</label>
+<input type="number" step="0.1" id="f_cuffed" value="3.5">
+</div>
+<div class="ig">
+<label>ETT Depth Constant (Age/2 + constant)</label>
+<input type="number" step="0.1" id="f_depth" value="12.0">
+</div>
+<div class="ig">
+<label>HR Max Formula Base Constant (Constant - Age)</label>
+<input type="number" step="1" id="f_hrmax" value="220">
+</div>
+<div class="btn-action-group">
+<button class="btn-save" type="button" onclick="saveFormulaSettings()">💾 Save Formulas</button>
+<button class="btn-restore" type="button" onclick="restoreDefaultFormulas()">↺ Restore Default Formulas</button>
+</div>
+</div>
+<div style="font-size:0.72rem; color:#854d0e; background:#fefce8; border:1.5px solid #fef08a; padding:12px; border-radius:10px; line-height:1.45; margin-bottom:12px;">
+<strong>CLINICAL DISCLAIMER:</strong> This webapp is developed solely as an intraoperative cognitive aid and planning reference. Dosing calculations and equipment estimations must always be corroborated with clinical judgment, official hospital drug formularies, and standard pediatric anaesthesia textbooks before administration.
+</div>
+</section>
 </main>
-
 <!-- BOTTOM NAVIGATION -->
 <nav>
-  <button type="button" class="nbtn active" onclick="switchTab('t1', this)"><span>📋</span>Inputs</button>
-  <button type="button" class="nbtn" onclick="switchTab('t2', this)"><span>🛠️</span>Equip</button>
-  <button type="button" class="nbtn" onclick="switchTab('t3', this)"><span>💊</span>GA Drugs</button>
-  <button type="button" class="nbtn" onclick="switchTab('t4', this)"><span>💉</span>Local</button>
-  <button type="button" class="nbtn" onclick="switchTab('t5', this)"><span>🚨</span>Emerg</button>
-  <button type="button" class="nbtn" onclick="switchTab('t6', this)"><span>⚙️</span>Settings</button>
+<button type="button" class="nbtn active" onclick="switchTab('t1', this)"><span>📋</span>Inputs</button>
+<button type="button" class="nbtn" onclick="switchTab('t2', this)"><span>🛠️</span>Equip</button>
+<button type="button" class="nbtn" onclick="switchTab('t3', this)"><span>💊</span>GA Drugs</button>
+<button type="button" class="nbtn" onclick="switchTab('t4', this)"><span>💉</span>Local</button>
+<button type="button" class="nbtn" onclick="switchTab('t5', this)"><span>🚨</span>Emerg</button>
+<button type="button" class="nbtn" onclick="switchTab('t6', this)"><span>⚙️</span>Settings</button>
 </nav>
-
 <script>
-  let patientType = 'child'; // 'child' or 'infant'
-  const defDoses = {
-    Atropine: { d: 0.02, u: "mg", min: 0.1, max: 0.5, formula: "0.02 mg/kg" },
-    Glycopyrollate: { d: 0.005, u: "mg", max: 0.2, formula: "0.005 mg/kg (5 mcg/kg)" },
-    Midazolam: { d: 0.1, u: "mg", max: 5.0, formula: "0.1 mg/kg" },
-    Fentanyl: { d: 1.5, u: "mcg", max: 100, formula: "1.5 mcg/kg" },
-    Remifentanil: { d: 0.5, u: "mcg", formula: "0.5 mcg/kg bolus" },
-    Thiopentone: { d: 5.0, u: "mg", max: 500, formula: "5 mg/kg" },
-    Propofol: { d: 3.0, u: "mg", formula: "3 mg/kg" },
-    Etomidate: { d: 0.3, u: "mg", max: 20, formula: "0.3 mg/kg" },
-    Ketamine: { d: 2.0, u: "mg", max: 100, formula: "2 mg/kg" },
-    Suxa: { d: 2.0, u: "mg", formula: "2 mg/kg" },
-    Atracurium: { d: 0.5, u: "mg", formula: "0.5 mg/kg" },
-    Vecuronium: { d: 0.1, u: "mg", formula: "0.1 mg/kg" },
-    Rocuronium: { d: 0.6, u: "mg", formula: "0.6 mg/kg" },
-    Paracetamol: { d: 15.0, u: "mg", max: 1000, formula: "15 mg/kg (max 1g)" },
-    Dexa: { d: 0.15, u: "mg", max: 8.0, formula: "0.15 mg/kg" },
-    Emeset: { d: 0.1, u: "mg", max: 4.0, formula: "0.1 mg/kg" },
-    Neostigmine: { d: 0.05, u: "mg", max: 2.5, formula: "0.05 mg/kg" },
-    Glyco_rev: { d: 0.01, u: "mg", max: 0.5, formula: "0.01 mg/kg (with Neostigmine)" },
-    Sugammadex: { d: 2.0, u: "mg", formula: "2 mg/kg" }
-  };
-
-  let cfg = defDoses;
-  try {
-    const saved = localStorage.getItem('pCfg_v2');
-    if (saved) cfg = JSON.parse(saved);
-  } catch (e) {}
-
-  let selDrugs = new Set();
-
-  function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('active'));
-    const target = document.getElementById(tabId);
-    if (target) target.classList.add('active');
-    if (btn) btn.classList.add('active');
-  }
-
-  function setPatientType(type) {
-    patientType = type;
-    const btnChild = document.getElementById('btnTypeChild');
-    const btnInfant = document.getElementById('btnTypeInfant');
-    const boxYears = document.getElementById('boxYears');
-    const boxMonths = document.getElementById('boxMonths');
-
-    if (type === 'child') {
-      btnChild.classList.add('active');
-      btnInfant.classList.remove('active');
-      boxYears.style.display = 'block';
-      boxMonths.style.display = 'none';
-      if (!document.getElementById('ay').value && document.getElementById('am').value) {
-        document.getElementById('ay').value = Math.max(1, (parseFloat(document.getElementById('am').value) / 12).toFixed(1));
-      }
-    } else {
-      btnInfant.classList.add('active');
-      btnChild.classList.remove('active');
-      boxYears.style.display = 'none';
-      boxMonths.style.display = 'block';
-      if (!document.getElementById('am').value && document.getElementById('ay').value) {
-        document.getElementById('am').value = Math.round(parseFloat(document.getElementById('ay').value) * 12);
-      }
-    }
-    recalculate();
-  }
-
-  function togglePill(el, drug) {
-    if (selDrugs.has(drug)) {
-      selDrugs.delete(drug);
-      el.classList.remove('sel');
-    } else {
-      selDrugs.add(drug);
-      el.classList.add('sel');
-    }
-    renderGA();
-  }
-
-  function getEffectiveAges() {
-    let yrs = 0;
-    let mos = 0;
-    if (patientType === 'child') {
-      yrs = parseFloat(document.getElementById('ay').value) || 0;
-      mos = yrs * 12;
-    } else {
-      mos = parseFloat(document.getElementById('am').value) || 0;
-      yrs = mos / 12;
-    }
-    return { yrs, mos };
-  }
-
-  function estimateWeight() {
-    const { yrs, mos } = getEffectiveAges();
-    let est = 3.5;
-    if (patientType === 'infant') {
-      est = mos <= 12 ? (mos + 9) / 2 : 2 * ((mos / 12) + 4);
-    } else {
-      est = yrs <= 5 ? 2 * (yrs + 4) : (yrs * 3) + 7;
-    }
-    document.getElementById('wt').value = Math.max(1, est).toFixed(1);
-    recalculate();
-  }
-
-  function updateCorrectedAge() {
-    const mos = parseFloat(document.getElementById('am').value) || 0;
-    const ga = parseFloat(document.getElementById('ga').value);
-    const corrTxt = document.getElementById('corrTxt');
-    if (patientType === 'infant' && !isNaN(ga) && ga < 40 && mos > 0) {
-      const premWks = 40 - ga;
-      const premMos = premWks / 4.345;
-      const corrected = (mos - premMos).toFixed(1);
-      corrTxt.innerText = `${corrected} mo (${premWks} wks premature)`;
-    } else {
-      corrTxt.innerText = '--';
-    }
-  }
-
-  function recalculate() {
-    const { yrs, mos } = getEffectiveAges();
-    const wt = parseFloat(document.getElementById('wt').value) || 0;
-
-    // Header badge
-    const badge = document.getElementById('sumBadge');
-    if (patientType === 'child') {
-      badge.innerText = `${yrs > 0 ? yrs + ' yr' : '-- yr'} | ${wt > 0 ? wt + ' kg' : '-- kg'}`;
-    } else {
-      badge.innerText = `${mos > 0 ? mos + ' mo' : '-- mo'} | ${wt > 0 ? wt + ' kg' : '-- kg'}`;
-    }
-
-    // Atropine Pill Visibility: only if age < 2 years
-    const atroPill = document.getElementById('p-atro');
-    if (yrs < 2 && (yrs > 0 || mos > 0)) {
-      atroPill.style.display = 'inline-block';
-    } else {
-      atroPill.style.display = 'none';
-      selDrugs.delete('Atropine');
-      atroPill.classList.remove('sel');
-    }
-
-    updateCorrectedAge();
-    calcEquipment(yrs, mos, wt);
-    renderGA(wt);
-    calcLocal(wt);
-    calcEmergency(wt);
-  }
-
-  function calcEquipment(yrs, mos, wt) {
-    // 1. Face Mask
-    let mask = "Size 1 (Infant)";
-    if (mos < 1) mask = "Size 00 / 0 (Neonate)";
-    else if (mos <= 12) mask = "Size 1 (Infant)";
-    else if (yrs <= 3) mask = "Size 2 (Toddler)";
-    else if (yrs <= 8) mask = "Size 3 (Child)";
-    else mask = "Size 4 (Adolescent/Adult)";
-
-    // 2. Airway (OPA) - strict match to user chart
-    let airway = "--";
-    if (mos < 1) {
-      airway = `Size 000 (40 mm) <span class="badge-c" style="background:#fbcfe8; color:#9d174d;">Pink</span>`;
-    } else if (mos <= 12) {
-      airway = `Size 00 (50 mm) <span class="badge-c" style="background:#bfdbfe; color:#1e40af;">Blue</span>`;
-    } else if (yrs <= 3) {
-      airway = `Size 0 (60 mm) <span class="badge-c" style="background:#000000; color:#ffffff;">Black</span>`;
-    } else if (yrs <= 8) {
-      airway = `Size 1 (70 mm) <span class="badge-c" style="background:#ffffff; color:#000000; border:1px solid #94a3b8;">White</span>`;
-    } else if (yrs <= 12) {
-      airway = `Size 2 (80-85 mm) <span class="badge-c" style="background:#bbf7d0; color:#166534;">Green</span>`;
-    } else {
-      airway = `Size 3 (90 mm) <span class="badge-c" style="background:#fef08a; color:#854d0e;">Yellow</span>`;
-    }
-
-    // 3. Laryngoscope Blade
-    let blade = "Miller 0 / 1";
-    if (mos < 1) blade = "Miller 0 (Straight)";
-    else if (mos <= 12) blade = "Miller 1 (Straight)";
-    else if (yrs <= 5) blade = "Mac 2 / Miller 1.5";
-    else if (yrs <= 10) blade = "Mac 2 - 3";
-    else blade = "Mac 3 (Curved)";
-
-    // 4. ETT Tube Sizes (ROUNDED TO WHOLE NUMBERS, NO DECIMALS)
-    let uncuffed = 0;
-    let cuffed = 0;
-    let depth = "--";
-
-    if (yrs < 1) {
-      if (mos < 1) {
-        uncuffed = 3;
-        cuffed = 3; // rounded whole
-        depth = "9 cm";
-      } else {
-        uncuffed = 4; // 3.5 rounded to 4
-        cuffed = 3;
-        depth = "10 cm";
-      }
-    } else {
-      uncuffed = Math.round((yrs / 4) + 4);
-      cuffed = Math.round((yrs / 4) + 3.5);
-      depth = `${((yrs / 2) + 12).toFixed(1)} cm`;
-    }
-
-    // 5. Ventilator
-    const vt = wt > 0 ? `${Math.round(wt * 6)} - ${Math.round(wt * 8)} mL` : '--';
-    let rr = "--";
-    if (mos < 1) rr = "40 - 50 bpm";
-    else if (mos <= 12) rr = "30 - 40 bpm";
-    else if (yrs <= 4) rr = "24 - 30 bpm";
-    else if (yrs <= 10) rr = "18 - 24 bpm";
-    else rr = "12 - 16 bpm";
-
-    // 6. Monitor HR Max
-    let hr = "--";
-    if (mos < 1) hr = "180 bpm";
-    else if (mos <= 12) hr = "160 bpm";
-    else if (yrs <= 4) hr = "140 bpm";
-    else if (yrs <= 10) hr = "120 bpm";
-    else hr = "100 bpm";
-
-    document.getElementById('eqM').innerText = mask;
-    document.getElementById('eqA').innerHTML = airway;
-    document.getElementById('eqB').innerText = blade;
-    document.getElementById('eqEu').innerText = `${uncuffed} mm ID`;
-    document.getElementById('eqEc').innerText = `${cuffed} mm ID`;
-    document.getElementById('eqEd').innerText = depth;
-    document.getElementById('eqVt').innerText = vt;
-    document.getElementById('eqRr').innerText = rr;
-    document.getElementById('eqHr').innerText = hr;
-  }
-
-  function renderGA(wt = parseFloat(document.getElementById('wt').value) || 0) {
-    const container = document.getElementById('gaList');
-    container.innerHTML = '';
-    const { yrs } = getEffectiveAges();
-    const allKeys = Object.keys(cfg).filter(k => !(k === 'Atropine' && yrs >= 2));
-    const sorted = [...allKeys.filter(k => selDrugs.has(k)), ...allKeys.filter(k => !selDrugs.has(k))];
-
-    sorted.forEach(k => {
-      const item = cfg[k];
-      const isSel = selDrugs.has(k);
-      let doseText = "--";
-
-      if (wt > 0) {
-        let calcVal = item.d * wt;
-        if (item.min && calcVal < item.min) calcVal = item.min;
-        if (item.max && calcVal > item.max) calcVal = item.max;
-        
-        // Output format: strictly mg or mcg (NOT mg/kg)
-        const formattedNum = calcVal < 10 && item.u === 'mg' ? calcVal.toFixed(2) : calcVal.toFixed(1);
-        doseText = `${formattedNum} ${item.u}`;
-      }
-
-      const card = document.createElement('div');
-      card.className = `dcard ${isSel ? 'sel' : ''}`;
-      card.innerHTML = `
-        <div class="dhdr">
-          <span class="dname">${k === 'Glyco_rev' ? 'Glycopyrollate (Rev)' : k} ${isSel ? '★' : ''}</span>
-          <span class="ddose">${doseText}</span>
-        </div>
-        <div class="dsub">Rate: ${item.formula || (item.d + ' ' + item.u + '/kg')}</div>
-      `;
-      container.appendChild(card);
-    });
-  }
-
-  function calcLocal(wt) {
-    if (wt <= 0) {
-      ['laLox', 'laPl', 'laAd', 'laBup', 'laRop', 'cL', 'cT', 'cM'].forEach(id => {
-        document.getElementById(id).innerText = '--';
-      });
-      return;
-    }
-    // Loxicard 2% (20 mg/mL) - 1.5 mg/kg
-    const loxMg = (wt * 1.5).toFixed(1);
-    const loxMl = (loxMg / 20).toFixed(2);
-    document.getElementById('laLox').innerText = `${loxMg} mg (${loxMl} mL 2%)`;
-
-    // Ligno Plain: 4 mg/kg
-    const lpMg = (wt * 4).toFixed(1);
-    document.getElementById('laPl').innerText = `${lpMg} mg (${(lpMg / 20).toFixed(1)} mL 2%)`;
-
-    // Ligno + Adr: 7 mg/kg
-    const laMg = (wt * 7).toFixed(1);
-    document.getElementById('laAd').innerText = `${laMg} mg (${(laMg / 20).toFixed(1)} mL 2%)`;
-
-    // Bupi Max: 2.0 mg/kg
-    const bupMg = (wt * 2.0).toFixed(1);
-    document.getElementById('laBup').innerText = `${bupMg} mg (${(bupMg / 2.5).toFixed(1)} mL 0.25%)`;
-
-    // Ropi Max: 2.5 mg/kg
-    const ropMg = (wt * 2.5).toFixed(1);
-    document.getElementById('laRop').innerText = `${ropMg} mg (${(ropMg / 2).toFixed(1)} mL 0.2%)`;
-
-    // Caudal Block: 0.25% Bupivacaine
-    document.getElementById('cL').innerText = `${(wt * 0.5).toFixed(1)} mL`;
-    document.getElementById('cT').innerText = `${Math.min(wt * 1.0, 20).toFixed(1)} mL`;
-    document.getElementById('cM').innerText = `${Math.min(wt * 1.25, 20).toFixed(1)} mL (capped)`;
-  }
-
-  function calcEmergency(wt) {
-    if (wt <= 0) {
-      ['emAdr', 'emAtr', 'emEph', 'emHyd', 'emSux'].forEach(id => {
-        document.getElementById(id).innerText = '--';
-      });
-      return;
-    }
-    // Adrenaline 10 mcg/kg
-    const adrMcg = (wt * 10).toFixed(0);
-    const adrMl = (wt * 0.1).toFixed(2);
-    document.getElementById('emAdr').innerText = `${adrMcg} mcg (${adrMl} mL of 1:10k)`;
-
-    // Atropine 0.02 mg/kg
-    let atro = wt * 0.02;
-    if (atro < 0.1) atro = 0.1;
-    if (atro > 0.5) atro = 0.5;
-    document.getElementById('emAtr').innerText = `${atro.toFixed(2)} mg IV`;
-
-    // Ephedrine 0.15 mg/kg
-    document.getElementById('emEph').innerText = `${(wt * 0.15).toFixed(1)} mg IV`;
-
-    // Hydrocortisone 4 mg/kg
-    document.getElementById('emHyd').innerText = `${(wt * 4).toFixed(0)} mg IV`;
-
-    // Succinylcholine
-    document.getElementById('emSux').innerText = `IV: ${(wt * 2).toFixed(1)} mg | IM: ${(wt * 4).toFixed(1)} mg`;
-  }
-
-  function renderSettings() {
-    const list = document.getElementById('setList');
-    list.innerHTML = '';
-    Object.keys(cfg).forEach(k => {
-      const row = document.createElement('div');
-      row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;';
-      row.innerHTML = `
-        <span style="font-size:0.8rem; font-weight:600;">${k}</span>
-        <div style="display:flex; gap:6px; align-items:center;">
-          <input type="number" step="0.001" value="${cfg[k].d}" style="width:75px; padding:4px 6px; font-size:0.8rem;" onchange="updateDoseSetting('${k}', this.value)">
-          <span style="font-size:0.75rem; color:var(--muted);">${cfg[k].u}/kg</span>
-        </div>
-      `;
-      list.appendChild(row);
-    });
-  }
-
-  function updateDoseSetting(k, val) {
-    const num = parseFloat(val);
-    if (!isNaN(num) && cfg[k]) {
-      cfg[k].d = num;
-      try {
-        localStorage.setItem('pCfg_v2', JSON.stringify(cfg));
-      } catch (e) {}
-      recalculate();
-    }
-  }
-
-  function saveDoctorProfile() {
-    const prof = {
-      n: document.getElementById('dn').value,
-      r: document.getElementById('dr').value,
-      d: document.getElementById('dd').value,
-      w: document.getElementById('dw').value
-    };
-    try {
-      localStorage.setItem('pDoc_v2', JSON.stringify(prof));
-      alert('Doctor profile saved successfully!');
-    } catch (e) {
-      alert('Profile saved!');
-    }
-  }
-
-  function loadDoctorProfile() {
-    try {
-      const saved = JSON.parse(localStorage.getItem('pDoc_v2'));
-      if (saved) {
-        if (saved.n) document.getElementById('dn').value = saved.n;
-        if (saved.r) document.getElementById('dr').value = saved.r;
-        if (saved.d) document.getElementById('dd').value = saved.d;
-        if (saved.w) document.getElementById('dw').value = saved.w;
-      }
-    } catch (e) {}
-  }
-
-  // Attach Input Listeners
-  document.getElementById('ay').addEventListener('input', recalculate);
-  document.getElementById('am').addEventListener('input', recalculate);
-  document.getElementById('ga').addEventListener('input', recalculate);
-  document.getElementById('wt').addEventListener('input', recalculate);
-
-  // Initial Boot
-  loadDoctorProfile();
-  renderSettings();
-  recalculate();
+// --- DEFAULT DRUG FORMULARY WITH CATEGORIES ---
+const defaultDoses = {
+// Category 1: Premeds & Anticholinergics
+Atropine: { category: "Premedication & Anticholinergics", catColor: "var(--cat-premed)", d: 0.02, u: "mg", min: 0.1, max: 0.5, formula: "0.02 mg/kg (min 0.1 mg)" },
+Glycopyrollate: { category: "Premedication & Anticholinergics", catColor: "var(--cat-premed)", d: 0.005, u: "mg", max: 0.2, formula: "0.005 mg/kg (5 mcg/kg)" },
+Midazolam: { category: "Premedication & Anticholinergics", catColor: "var(--cat-premed)", d: 0.1, u: "mg", max: 5.0, formula: "0.1 mg/kg (0.05 - 0.15 mg/kg)" },
+// Category 2: Opioids
+Fentanyl: { category: "Opioids & Analgesia", catColor: "var(--cat-opioid)", d: 1.5, u: "mcg", max: 100, formula: "1.5 mcg/kg (1 - 2 mcg/kg)" },
+Remifentanil: { category: "Opioids & Analgesia", catColor: "var(--cat-opioid)", d: 0.5, u: "mcg", formula: "0.5 mcg/kg bolus" },
+// Category 3: Induction Agents
+Propofol: { category: "Induction Agents", catColor: "var(--cat-induction)", d: 3.0, u: "mg", formula: "3 mg/kg (infants: 3.5 - 4 mg/kg)" },
+Thiopentone: { category: "Induction Agents", catColor: "var(--cat-induction)", d: 5.0, u: "mg", max: 500, formula: "5 mg/kg (4 - 6 mg/kg)" },
+Ketamine: { category: "Induction Agents", catColor: "var(--cat-induction)", d: 2.0, u: "mg", max: 100, formula: "2 mg/kg IV (4 - 6 mg/kg IM)" },
+Etomidate: { category: "Induction Agents", catColor: "var(--cat-induction)", d: 0.3, u: "mg", max: 20, formula: "0.3 mg/kg" },
+// Category 4: Muscle Relaxants
+Suxa: { category: "Neuromuscular Blockers", catColor: "var(--cat-nmba)", d: 2.0, u: "mg", formula: "2 mg/kg (infants: 2 - 3 mg/kg)" },
+Atracurium: { category: "Neuromuscular Blockers", catColor: "var(--cat-nmba)", d: 0.5, u: "mg", formula: "0.5 mg/kg" },
+Vecuronium: { category: "Neuromuscular Blockers", catColor: "var(--cat-nmba)", d: 0.1, u: "mg", formula: "0.1 mg/kg" },
+Rocuronium: { category: "Neuromuscular Blockers", catColor: "var(--cat-nmba)", d: 0.6, u: "mg", formula: "0.6 mg/kg (RSI: 1.0 - 1.2 mg/kg)" },
+// Category 5: Analgesics
+Paracetamol: { category: "Antipyretic & Non-Opioid", catColor: "var(--cat-analgesic)", d: 15.0, u: "mg", max: 1000, formula: "15 mg/kg IV (max 1000 mg)" },
+// Category 6: Antiemetics / Steroids
+Dexa: { category: "Antiemetics & Corticosteroids", catColor: "var(--cat-adjunct)", d: 0.15, u: "mg", max: 8.0, formula: "0.15 mg/kg (antiemetic)" },
+Emeset: { category: "Antiemetics & Corticosteroids", catColor: "var(--cat-adjunct)", d: 0.1, u: "mg", max: 4.0, formula: "0.1 mg/kg (max 4 mg)" },
+// Category 7: Reversals
+Neostigmine: { category: "Neuromuscular Reversal", catColor: "var(--cat-reversal)", d: 0.05, u: "mg", max: 2.5, formula: "0.05 mg/kg (50 mcg/kg)" },
+Glyco_rev: { category: "Neuromuscular Reversal", catColor: "var(--cat-reversal)", d: 0.01, u: "mg", max: 0.5, formula: "0.01 mg/kg (10 mcg/kg)" },
+Sugammadex: { category: "Neuromuscular Reversal", catColor: "var(--cat-reversal)", d: 2.0, u: "mg", formula: "2.0 mg/kg (profound: 4.0 mg/kg)" }
+};
+// Default Equipment Formulas
+const defaultFormulas = {
+uncuffed: 4.0,
+cuffed: 3.5,
+depth: 12.0,
+hrmax: 220
+};
+// Global state
+let patientType = 'child';
+let cfg = loadDoseConfig();
+let formulas = loadFormulaConfig();
+let selDrugs = new Set();
+function loadDoseConfig() {
+try {
+const saved = localStorage.getItem('pedi_cfg_v3');
+if (saved) return JSON.parse(saved);
+} catch (e) {}
+return JSON.parse(JSON.stringify(defaultDoses));
+}
+function loadFormulaConfig() {
+try {
+const saved = localStorage.getItem('pedi_formulas_v3');
+if (saved) return JSON.parse(saved);
+} catch (e) {}
+return JSON.parse(JSON.stringify(defaultFormulas));
+}
+// Tab Switching
+function switchTab(tabId, btn) {
+document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('active'));
+const target = document.getElementById(tabId);
+if (target) target.classList.add('active');
+if (btn) btn.classList.add('active');
+window.scrollTo(0, 0);
+}
+// Child vs Infant Selector
+function setPatientType(type) {
+patientType = type;
+const btnChild = document.getElementById('btnTypeChild');
+const btnInfant = document.getElementById('btnTypeInfant');
+const boxYears = document.getElementById('boxYears');
+const boxMonths = document.getElementById('boxMonths');
+if (type === 'child') {
+btnChild.classList.add('active');
+btnInfant.classList.remove('active');
+boxYears.style.display = 'block';
+boxMonths.style.display = 'none';
+if (!document.getElementById('ay').value && document.getElementById('am').value) {
+document.getElementById('ay').value = Math.max(1, (parseFloat(document.getElementById('am').value) / 12).toFixed(1));
+}
+} else {
+btnInfant.classList.add('active');
+btnChild.classList.remove('active');
+boxYears.style.display = 'none';
+boxMonths.style.display = 'block';
+if (!document.getElementById('am').value && document.getElementById('ay').value) {
+document.getElementById('am').value = Math.round(parseFloat(document.getElementById('ay').value) * 12);
+}
+}
+recalculate();
+}
+// Pill Toggling
+function togglePill(el, drug) {
+if (selDrugs.has(drug)) {
+selDrugs.delete(drug);
+el.classList.remove('sel');
+} else {
+selDrugs.add(drug);
+el.classList.add('sel');
+}
+renderGADrugs();
+}
+function getAges() {
+let yrs = 0;
+let mos = 0;
+if (patientType === 'child') {
+yrs = parseFloat(document.getElementById('ay').value) || 0;
+mos = yrs * 12;
+} else {
+mos = parseFloat(document.getElementById('am').value) || 0;
+yrs = mos / 12;
+}
+return { yrs, mos };
+}
+function estimateWeight() {
+const { yrs, mos } = getAges();
+let est = 3.5;
+if (patientType === 'infant') {
+est = mos <= 12 ? (mos + 9) / 2 : 2 * ((mos / 12) + 4);
+} else {
+est = yrs <= 5 ? 2 * (yrs + 4) : (yrs * 3) + 7;
+}
+document.getElementById('wt').value = Math.max(1, est).toFixed(1);
+recalculate();
+}
+function updateCorrectedAge() {
+const mos = parseFloat(document.getElementById('am').value) || 0;
+const ga = parseFloat(document.getElementById('ga').value);
+const corrTxt = document.getElementById('corrTxt');
+if (patientType === 'infant' && !isNaN(ga) && ga < 40 && mos > 0) {
+const premWks = 40 - ga;
+const premMos = premWks / 4.345;
+const corrected = (mos - premMos).toFixed(1);
+corrTxt.innerText = ⁠${corrected} mo (${premWks} wks premature)⁠;
+} else {
+corrTxt.innerText = '--';
+}
+}
+// Master Recalculation
+function recalculate() {
+const { yrs, mos } = getAges();
+const wt = parseFloat(document.getElementById('wt').value) || 0;
+// Update Summary Badge
+const badge = document.getElementById('sumBadge');
+if (patientType === 'child') {
+badge.innerText = ⁠${yrs > 0 ? yrs + ' yr' : '-- yr'} | ${wt > 0 ? wt + ' kg' : '-- kg'}⁠;
+} else {
+badge.innerText = ⁠${mos > 0 ? mos + ' mo' : '-- mo'} | ${wt > 0 ? wt + ' kg' : '-- kg'}⁠;
+}
+// Atropine visible only for age < 2 years
+const atroPill = document.getElementById('p-atro');
+if (yrs < 2 && (yrs > 0 || mos > 0)) {
+atroPill.style.display = 'inline-block';
+} else {
+atroPill.style.display = 'none';
+selDrugs.delete('Atropine');
+atroPill.classList.remove('sel');
+}
+updateCorrectedAge();
+calcEquipment(yrs, mos, wt);
+renderGADrugs(wt);
+calcLocal(wt);
+calcEmergency(wt);
+}
+// Equipment Calculations
+function calcEquipment(yrs, mos, wt) {
+// 1. Face Mask
+let mask = "Size 1 (Infant)";
+if (mos < 1) mask = "Size 00 / 0 (Neonate)";
+else if (mos <= 12) mask = "Size 1 (Infant)";
+else if (yrs <= 3) mask = "Size 2 (Toddler)";
+else if (yrs <= 8) mask = "Size 3 (Child)";
+else mask = "Size 4 (Adolescent / Adult)";
+// 2. Airway (OPA) - Standard chart matching
+let airway = "--";
+if (mos < 1) {
+airway = ⁠Size 000 (40 mm) <span class="badge-c" style="background:#fbcfe8; color:#9d174d;">Pink</span>⁠;
+} else if (mos <= 12) {
+airway = ⁠Size 00 (50 mm) <span class="badge-c" style="background:#bfdbfe; color:#1e40af;">Blue</span>⁠;
+} else if (yrs <= 3) {
+airway = ⁠Size 0 (60 mm) <span class="badge-c" style="background:#000000; color:#ffffff;">Black</span>⁠;
+} else if (yrs <= 8) {
+airway = ⁠Size 1 (70 mm) <span class="badge-c" style="background:#ffffff; color:#000000; border:1px solid #94a3b8;">White</span>⁠;
+} else if (yrs <= 12) {
+airway = ⁠Size 2 (80-85 mm) <span class="badge-c" style="background:#bbf7d0; color:#166534;">Green</span>⁠;
+} else {
+airway = ⁠Size 3 (90 mm) <span class="badge-c" style="background:#fef08a; color:#854d0e;">Yellow</span>⁠;
+}
+// 3. Laryngoscope Blade
+let blade = "Miller 1";
+if (mos < 1) blade = "Miller 0 (Straight)";
+else if (mos <= 12) blade = "Miller 1 (Straight)";
+else if (yrs <= 5) blade = "Mac 2 / Miller 1.5";
+else if (yrs <= 10) blade = "Mac 2 - 3";
+else blade = "Mac 3 (Curved)";
+// 4. ETT Tube Sizes (WHOLE NUMBERS)
+let uncuffed = 0;
+let cuffed = 0;
+let depth = "--";
+if (yrs < 1) {
+if (mos < 1) {
+uncuffed = 3;
+cuffed = 3;
+depth = "9 cm";
+} else {
+uncuffed = 4;
+cuffed = 3;
+depth = "10 cm";
+}
+} else {
+uncuffed = Math.round((yrs / 4) + formulas.uncuffed);
+cuffed = Math.round((yrs / 4) + formulas.cuffed);
+depth = ⁠${((yrs / 2) + formulas.depth).toFixed(1)} cm⁠;
+}
+// 5. Ventilator
+const vt = wt > 0 ? ⁠${Math.round(wt * 6)} - ${Math.round(wt * 8)} mL⁠ : '--';
+let rr = "--";
+if (mos < 1) rr = "40 - 50 bpm";
+else if (mos <= 12) rr = "30 - 40 bpm";
+else if (yrs <= 4) rr = "24 - 30 bpm";
+else if (yrs <= 10) rr = "18 - 24 bpm";
+else rr = "12 - 16 bpm";
+// 6. Monitor HR Max
+let hr = "--";
+if (yrs > 0 || mos > 0) {
+const computedHr = Math.round(formulas.hrmax - yrs);
+hr = ⁠${Math.min(computedHr, 190)} bpm⁠;
+}
+document.getElementById('eqM').innerText = mask;
+document.getElementById('eqA').innerHTML = airway;
+document.getElementById('eqB').innerText = blade;
+document.getElementById('eqEu').innerText = ⁠${uncuffed} mm ID⁠;
+document.getElementById('eqEc').innerText = ⁠${cuffed} mm ID⁠;
+document.getElementById('eqEd').innerText = depth;
+document.getElementById('eqVt').innerText = vt;
+document.getElementById('eqRr').innerText = rr;
+document.getElementById('eqHr').innerText = hr;
+}
+// Render Tab 3 GA Drugs: Split Category-wise & Selected First
+function renderGADrugs(wt = parseFloat(document.getElementById('wt').value) || 0) {
+const container = document.getElementById('gaContainer');
+container.innerHTML = '';
+const { yrs } = getAges();
+// Collect available keys (filtering Atropine for >= 2 yrs)
+const allKeys = Object.keys(cfg).filter(k => !(k === 'Atropine' && yrs >= 2));
+// Group keys by category
+const grouped = {};
+allKeys.forEach(k => {
+const cat = cfg[k].category || "General Anaesthesia";
+if (!grouped[cat]) grouped[cat] = [];
+grouped[cat].push(k);
+});
+// Categories order
+const catOrder = [
+"Premedication & Anticholinergics",
+"Opioids & Analgesia",
+"Induction Agents",
+"Neuromuscular Blockers",
+"Antipyretic & Non-Opioid",
+"Antiemetics & Corticosteroids",
+"Neuromuscular Reversal"
+];
+catOrder.forEach(cat => {
+const drugsInCat = grouped[cat];
+if (!drugsInCat || drugsInCat.length === 0) return;
+// Sort inside category: Selected first, then non-selected
+drugsInCat.sort((a, b) => {
+const aSel = selDrugs.has(a) ? 1 : 0;
+const bSel = selDrugs.has(b) ? 1 : 0;
+return bSel - aSel;
+});
+// Category Section wrapper
+const catBox = document.createElement('div');
+catBox.className = 'card';
+catBox.style.padding = '10px 12px';
+catBox.style.marginBottom = '10px';
+const firstDrugColor = cfg[drugsInCat[0]].catColor || 'var(--primary)';
+catBox.innerHTML = ⁠<div style="font-size:0.75rem; font-weight:800; color:${firstDrugColor}; text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center; gap:6px;"> <span style="width:8px; height:8px; border-radius:50%; background:${firstDrugColor};"></span> ${cat} </div>⁠;
+drugsInCat.forEach(k => {
+const item = cfg[k];
+const isSel = selDrugs.has(k);
+let doseText = "--";
+if (wt > 0) {
+let total = item.d * wt;
+if (item.min && total < item.min) total = item.min;
+if (item.max && total > item.max) total = item.max;
+const formatted = (total < 10 && item.u === 'mg') ? total.toFixed(2) : total.toFixed(1);
+doseText = ⁠${formatted} ${item.u}⁠;
+}
+const card = document.createElement('div');
+card.className = ⁠ga-card ${isSel ? 'selected' : ''}⁠;
+card.style.borderLeftColor = firstDrugColor;
+card.innerHTML = ⁠<div class="ga-top"> <span class="ga-name"> ${k === 'Glyco_rev' ? 'Glycopyrollate (Rev)' : k} ${isSel ? '<span style="color:#0284c7;">★</span>' : ''} </span> <span class="ga-dose">${doseText}</span> </div> <div class="ga-sub"> <span>Std: <strong>${item.d} ${item.u}/kg</strong></span> <span style="color:var(--txt-muted);">${item.formula || ''}</span> </div>⁠;
+catBox.appendChild(card);
+});
+container.appendChild(catBox);
+});
+}
+// Local Anaesthetic Calculations
+function calcLocal(wt) {
+if (wt <= 0) {
+['laLox', 'laPl', 'laAd', 'laBup', 'laRop', 'cL', 'cT', 'cM'].forEach(id => {
+document.getElementById(id).innerText = '--';
+});
+return;
+}
+const loxMg = (wt * 1.5).toFixed(1);
+const loxMl = (loxMg / 20).toFixed(2);
+document.getElementById('laLox').innerText = ⁠${loxMg} mg (${loxMl} mL 2%)⁠;
+const lpMg = (wt * 4).toFixed(1);
+document.getElementById('laPl').innerText = ⁠${lpMg} mg (${(lpMg / 20).toFixed(1)} mL 2%)⁠;
+const laMg = (wt * 7).toFixed(1);
+document.getElementById('laAd').innerText = ⁠${laMg} mg (${(laMg / 20).toFixed(1)} mL 2%)⁠;
+const bupMg = (wt * 2.0).toFixed(1);
+document.getElementById('laBup').innerText = ⁠${bupMg} mg (${(bupMg / 2.5).toFixed(1)} mL 0.25%)⁠;
+const ropMg = (wt * 2.5).toFixed(1);
+document.getElementById('laRop').innerText = ⁠${ropMg} mg (${(ropMg / 2).toFixed(1)} mL 0.2%)⁠;
+document.getElementById('cL').innerText = ⁠${(wt * 0.5).toFixed(1)} mL⁠;
+document.getElementById('cT').innerText = ⁠${Math.min(wt * 1.0, 20).toFixed(1)} mL⁠;
+document.getElementById('cM').innerText = ⁠${Math.min(wt * 1.25, 20).toFixed(1)} mL (max 20)⁠;
+}
+// Emergency Drug Calculations
+function calcEmergency(wt) {
+if (wt <= 0) {
+['emAdr', 'emAtr', 'emEph', 'emHyd', 'emSux'].forEach(id => {
+document.getElementById(id).innerText = '--';
+});
+return;
+}
+const adrMcg = (wt * 10).toFixed(0);
+const adrMl = (wt * 0.1).toFixed(2);
+document.getElementById('emAdr').innerText = ⁠${adrMcg} mcg (${adrMl} mL 1:10k)⁠;
+let atro = wt * 0.02;
+if (atro < 0.1) atro = 0.1;
+if (atro > 0.5) atro = 0.5;
+document.getElementById('emAtr').innerText = ⁠${atro.toFixed(2)} mg IV⁠;
+document.getElementById('emEph').innerText = ⁠${(wt * 0.15).toFixed(1)} mg IV⁠;
+document.getElementById('emHyd').innerText = ⁠${(wt * 4).toFixed(0)} mg IV⁠;
+document.getElementById('emSux').innerText = ⁠IV: ${(wt * 2).toFixed(1)} mg | IM: ${(wt * 4).toFixed(1)} mg⁠;
+}
+// Render Tab 6 Settings Formulary
+function renderSettingsFormulary() {
+const container = document.getElementById('settingsDoseContainer');
+container.innerHTML = '';
+Object.keys(cfg).forEach(k => {
+const item = cfg[k];
+const row = document.createElement('div');
+row.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:7px 0; border-bottom:1px solid #f1f5f9;';
+row.innerHTML = ⁠<div> <div style="font-size:0.82rem; font-weight:800; color:var(--txt-main);">${k === 'Glyco_rev' ? 'Glycopyrollate (Rev)' : k}</div> <div style="font-size:0.68rem; color:var(--txt-muted);">${item.category}</div> </div> <div style="display:flex; gap:5px; align-items:center;"> <input type="number" step="0.001" value="${item.d}" style="width:75px; padding:5px 8px; font-size:0.85rem; font-weight:700;" data-drugkey="${k}"> <span style="font-size:0.75rem; color:var(--txt-muted); font-weight:700; min-width:45px;">${item.u}/kg</span> </div>⁠;
+container.appendChild(row);
+});
+}
+// Save All Dose Settings (Issue 1 fixed: Immediately updates cfg, persists, and refreshes Tab 3)
+function saveAllDoseSettings() {
+const inputs = document.querySelectorAll('#settingsDoseContainer input');
+inputs.forEach(inp => {
+const k = inp.dataset.drugkey;
+const val = parseFloat(inp.value);
+if (!isNaN(val) && cfg[k]) {
+cfg[k].d = val;
+// Synchronize formula string text
+cfg[k].formula = ⁠${val} ${cfg[k].u}/kg⁠;
+}
+});
+localStorage.setItem('pedi_cfg_v3', JSON.stringify(cfg));
+recalculate();
+alert('Drug doses updated and saved successfully! Tab 3 has been refreshed.');
+}
+// Restore Default Drug Doses (Issue 3)
+function restoreDefaultDoses() {
+if (confirm('Reset all drug doses to standard textbook defaults?')) {
+cfg = JSON.parse(JSON.stringify(defaultDoses));
+localStorage.removeItem('pedi_cfg_v3');
+renderSettingsFormulary();
+recalculate();
+alert('All drug doses restored to factory defaults!');
+}
+}
+// Save Equipment Formula Constants (Issue 5)
+function saveFormulaSettings() {
+formulas.uncuffed = parseFloat(document.getElementById('f_uncuffed').value) || 4.0;
+formulas.cuffed = parseFloat(document.getElementById('f_cuffed').value) || 3.5;
+formulas.depth = parseFloat(document.getElementById('f_depth').value) || 12.0;
+formulas.hrmax = parseFloat(document.getElementById('f_hrmax').value) || 220;
+localStorage.setItem('pedi_formulas_v3', JSON.stringify(formulas));
+recalculate();
+alert('Formulas updated and saved successfully! Tab 2 has been refreshed.');
+}
+// Restore Default Formulas (Issue 5)
+function restoreDefaultFormulas() {
+if (confirm('Reset equipment and monitor formulas to standard defaults?')) {
+formulas = JSON.parse(JSON.stringify(defaultFormulas));
+localStorage.removeItem('pedi_formulas_v3');
+document.getElementById('f_uncuffed').value = defaultFormulas.uncuffed;
+document.getElementById('f_cuffed').value = defaultFormulas.cuffed;
+document.getElementById('f_depth').value = defaultFormulas.depth;
+document.getElementById('f_hrmax').value = defaultFormulas.hrmax;
+recalculate();
+alert('Equipment formulas restored to factory defaults!');
+}
+}
+// Doctor Profile Logic (Issue 4)
+function saveDoctorProfile() {
+const prof = {
+n: document.getElementById('dn').value.trim(),
+r: document.getElementById('dr').value.trim(),
+d: document.getElementById('dd').value.trim(),
+w: document.getElementById('dw').value.trim()
+};
+localStorage.setItem('pedi_doc_v3', JSON.stringify(prof));
+applyDoctorHeader(prof.n);
+alert('Doctor profile saved successfully!');
+}
+function loadDoctorProfile() {
+try {
+const saved = JSON.parse(localStorage.getItem('pedi_doc_v3'));
+if (saved) {
+if (saved.n) document.getElementById('dn').value = saved.n;
+if (saved.r) document.getElementById('dr').value = saved.r;
+if (saved.d) document.getElementById('dd').value = saved.d;
+if (saved.w) document.getElementById('dw').value = saved.w;
+applyDoctorHeader(saved.n);
+}
+} catch (e) {}
+}
+function applyDoctorHeader(name) {
+const headerDoc = document.getElementById('headerDocName');
+const headerText = document.getElementById('headerDocText');
+if (name && name.length > 0) {
+headerText.innerText = name;
+headerDoc.style.display = 'flex';
+} else {
+headerDoc.style.display = 'none';
+}
+}
+// Initialize Formula Inputs in Tab 6
+function initFormulaInputs() {
+document.getElementById('f_uncuffed').value = formulas.uncuffed;
+document.getElementById('f_cuffed').value = formulas.cuffed;
+document.getElementById('f_depth').value = formulas.depth;
+document.getElementById('f_hrmax').value = formulas.hrmax;
+}
+// Event Listeners
+document.getElementById('ay').addEventListener('input', recalculate);
+document.getElementById('am').addEventListener('input', recalculate);
+document.getElementById('ga').addEventListener('input', recalculate);
+document.getElementById('wt').addEventListener('input', recalculate);
+// Initial Execution
+loadDoctorProfile();
+initFormulaInputs();
+renderSettingsFormulary();
+recalculate();
 </script>
 </body>
 </html>
