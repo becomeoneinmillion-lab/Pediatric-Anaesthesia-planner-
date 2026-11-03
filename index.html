@@ -27,6 +27,7 @@ input,select{width:100%;background:#f8fafc;border:1.5px solid var(--border);colo
 input:focus,select:focus{border-color:var(--prim);background:#fff}
 .btn-sm{background:var(--prim);color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:0.72rem;cursor:pointer;font-weight:600}
 .btn-gray{background:#64748b;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:0.72rem;cursor:pointer;font-weight:600}
+.btn-red{background:#ef4444;color:#fff;border:none;padding:5px 10px;border-radius:5px;font-size:0.72rem;cursor:pointer;font-weight:600}
 .cat-box{border-radius:8px;padding:8px 10px;margin-bottom:8px;border:1px solid var(--border)}
 .cat-hdr{font-size:0.72rem;font-weight:800;text-transform:uppercase;margin-bottom:6px;letter-spacing:0.3px}
 .pgrid{display:flex;flex-wrap:wrap;gap:6px}
@@ -42,6 +43,7 @@ input:focus,select:focus{border-color:var(--prim);background:#fff}
 .dcard.sel{border-left-color:var(--prim);background:#f0f9ff}
 .dhdr{display:flex;justify-content:space-between;align-items:center}
 .emg{border-left:4px solid var(--danger);background:#fef2f2;border:1px solid #fecaca;border-left-width:4px;border-radius:6px;padding:9px;margin-bottom:8px}
+.emg-sub{background:#ffffff;border:1px solid #fed7d7;border-radius:4px;padding:6px;margin-top:4px;font-size:0.74rem;color:#7f1d1d;line-height:1.35}
 nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid var(--border);display:grid;grid-template-columns:repeat(6,1fr);z-index:100;box-shadow:0 -1px 4px rgba(0,0,0,0.03)}
 .nbtn{background:none;border:none;color:var(--mut);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:0.6rem;font-weight:700;gap:2px;cursor:pointer}
 .nbtn.active{color:var(--prim)}
@@ -61,9 +63,11 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
   <!-- TAB 1: INPUTS -->
   <section id="t1" class="tab active">
     <div class="card">
-      <div class="ctitle">Patient Demographics</div>
+      <div class="ctitle">
+        <span>Patient Demographics</span>
+        <button class="btn-red" type="button" onclick="resetPatientInputs()">🔄 Reset Patient</button>
+      </div>
       
-      <!-- Sex Selection -->
       <div class="ig">
         <label>Sex</label>
         <div class="pgrid">
@@ -121,7 +125,6 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
       <div class="row"><span class="lbl">Airway (OPA)</span><span class="val" id="eqA">--</span></div>
       <div class="row"><span class="lbl">Laryngoscope Blade</span><span class="val" id="eqB">--</span></div>
       
-      <!-- Tubes: 0.5 mm Step + Calculated -->
       <div class="row">
         <div><span class="lbl">ETT Uncuffed (0.5 Step)</span><span class="sub-formula" id="subEu">Formula: (Age/4) + 4</span></div>
         <span class="val" id="eqEu" style="color:var(--prim);font-size:0.95rem">--</span>
@@ -154,7 +157,7 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
   <section id="t4" class="tab">
     <div class="card">
       <div class="ctitle">Local Anaesthesia & IV</div>
-      <div class="row"><div><div class="lbl" style="color:var(--txt);font-weight:700">Loxicard IV (2%)</div><small style="color:var(--mut)">1.5 mg/kg</small></div><div class="val" id="laLox">--</div></div>
+      <div class="row"><div><div class="lbl" style="color:var(--txt);font-weight:700">Loxicard IV (2%)</div><small style="color:var(--mut)">1.5 mg/kg (airway reflex attenuation)</small></div><div class="val" id="laLox">--</div></div>
       <div class="row"><div><div class="lbl" style="color:var(--txt);font-weight:700">Lignocaine Plain</div><small style="color:var(--mut)">Max 4 mg/kg</small></div><div class="val" id="laPl">--</div></div>
       <div class="row"><div><div class="lbl" style="color:var(--txt);font-weight:700">Lignocaine + Adrenaline</div><small style="color:var(--mut)">Max 7 mg/kg</small></div><div class="val" id="laAd">--</div></div>
       <div class="row"><div><div class="lbl" style="color:var(--txt);font-weight:700">Bupivacaine Max</div><small style="color:var(--mut)">Max 2.0 mg/kg</small></div><div class="val" id="laBup">--</div></div>
@@ -168,14 +171,65 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
     </div>
   </section>
 
-  <!-- TAB 5: EMERGENCY -->
+  <!-- TAB 5: EMERGENCY & COMPLICATIONS -->
   <section id="t5" class="tab">
-    <div class="ctitle" style="color:var(--danger);margin:4px 4px 8px">Emergency Protocols</div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Adrenaline (1:10,000)</span><span id="emAdr">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">10 mcg/kg IV (0.1 mL/kg of 1:10,000). Dilute 1 mL in 9 mL NS.</small></div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Atropine</span><span id="emAtr">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">0.02 mg/kg IV (Min: 0.1 mg, Max: 0.5 mg).</small></div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Ephedrine</span><span id="emEph">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">0.1 - 0.2 mg/kg IV. Dilute 30 mg in 9 mL NS (3 mg/mL).</small></div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Hydrocortisone</span><span id="emHyd">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">2 - 4 mg/kg IV.</small></div>
-    <div class="emg"><div style="display:flex;justify-content:space-between;color:var(--danger);font-weight:700;font-size:0.85rem"><span>Succinylcholine</span><span id="emSux">--</span></div><small style="color:#991b1b;display:block;margin-top:3px">IV: 1 - 2 mg/kg | IM: 3 - 4 mg/kg (with Atropine 0.02 mg/kg).</small></div>
+    <div class="ctitle" style="color:var(--danger);margin:4px 4px 8px">Emergency Drug Guidelines & Crisis Protocols</div>
+    
+    <!-- 1. Adrenaline Protocols -->
+    <div class="emg">
+      <div style="color:var(--danger);font-weight:800;font-size:0.86rem;margin-bottom:4px">1. ADRENALINE (EPINEPHRINE) CRISIS PROTOCOLS</div>
+      
+      <!-- Cardiac Arrest -->
+      <div class="emg-sub">
+        <strong>Cardiac Arrest (IV/IO):</strong> <span id="emgAdrCa" style="font-weight:800;color:var(--danger)">--</span><br>
+        <em>Dose:</em> 10 mcg/kg (0.1 mL/kg of 1:10,000 dilution) every 3–5 min.<br>
+        <em>Prep:</em> 1 mL ampoule (1:1,000 = 1 mg/mL) + 9 mL NS = 100 mcg/mL.
+      </div>
+
+      <!-- Anaphylaxis -->
+      <div class="emg-sub">
+        <strong>Anaphylaxis:</strong><br>
+        • <u>IM Anterolateral Thigh:</u> <span id="emgAdrAnaIm" style="font-weight:800;color:var(--danger)">--</span> (10 mcg/kg of 1:1,000, 0.01 mL/kg; Max 0.3 mg child, 0.5 mg adolescent).<br>
+        • <u>IV Refractory / Hypotension:</u> <span id="emgAdrAnaIv" style="font-weight:800;color:var(--danger)">--</span> (1 mcg/kg bolus = 0.1 mL/kg of 1:100,000 dilute solution).<br>
+        • <u>Endotracheal (if no IV/IO):</u> <span id="emgAdrEt" style="font-weight:800;color:var(--danger)">--</span> (50–100 mcg/kg = 0.5–1.0 mL/kg of 1:10,000 followed by 5 mL flush).
+      </div>
+    </div>
+
+    <!-- 2. Acute Complications Management -->
+    <div class="emg">
+      <div style="color:var(--danger);font-weight:800;font-size:0.86rem;margin-bottom:4px">2. ACUTE INTRAOPERATIVE COMPLICATIONS</div>
+      
+      <!-- Laryngospasm -->
+      <div class="emg-sub">
+        <strong>Laryngospasm Protocol:</strong><br>
+        1. 100% FiO2, CPAP + jaw thrust (Larson's notch pressure).<br>
+        2. Propofol 0.5–1 mg/kg IV.<br>
+        3. If persistent: <u>Succinylcholine:</u> <span id="emgLarynSux" style="font-weight:800;color:var(--danger)">--</span> (IV 1–2 mg/kg | IM 3–4 mg/kg with Atropine 0.02 mg/kg).
+      </div>
+
+      <!-- Bronchospasm -->
+      <div class="emg-sub">
+        <strong>Severe Bronchospasm Protocol:</strong><br>
+        1. Deepen anaesthesia (Sevoflurane / Propofol / Ketamine 1 mg/kg).<br>
+        2. Salbutamol MDI via ETT: 4–8 puffs.<br>
+        3. <u>Hydrocortisone:</u> <span id="emgBronchoHydro" style="font-weight:800;color:var(--danger)">--</span> (4 mg/kg IV).<br>
+        4. Refractory: Salbutamol IV 5 mcg/kg bolus or Adrenaline IV 1 mcg/kg.
+      </div>
+
+      <!-- LAST -->
+      <div class="emg-sub">
+        <strong>Local Anaesthetic Systemic Toxicity (LAST):</strong><br>
+        • Stop LA injection, secure airway with 100% O2, hyperventilate.<br>
+        • <u>20% Intralipid:</u> <span id="emgLipid" style="font-weight:800;color:var(--danger)">--</span> (1.5 mL/kg IV bolus over 1 min; then 0.25 mL/kg/min infusion). Repeat bolus twice if unstable.
+      </div>
+    </div>
+
+    <!-- 3. Hemodynamic Emergency Doses -->
+    <div class="emg">
+      <div style="color:var(--danger);font-weight:800;font-size:0.86rem;margin-bottom:4px">3. CARDIOVASCULAR RESUSCITATION</div>
+      <div class="row"><span class="lbl" style="color:#7f1d1d">Atropine (0.02 mg/kg, min 0.1 mg)</span><span class="val" id="emAtr" style="color:var(--danger)">--</span></div>
+      <div class="row"><span class="lbl" style="color:#7f1d1d">Ephedrine (0.15 mg/kg IV)</span><span class="val" id="emEph" style="color:var(--danger)">--</span></div>
+    </div>
   </section>
 
   <!-- TAB 6: SETTINGS -->
@@ -191,7 +245,25 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
       <button class="btn-sm" style="width:100%;padding:9px" type="button" onclick="saveDoc()">Save Profile</button>
     </div>
 
-    <!-- Add New Custom Drug Form -->
+    <!-- Add New Category -->
+    <div class="card" style="border:1.5px dashed var(--prim);background:#f0fdf4">
+      <div class="ctitle" style="color:#16a34a">+ Add New Drug Category</div>
+      <div class="g2">
+        <div class="ig"><label>Category Name</label><input type="text" id="newCatName" placeholder="e.g. Inotropes"></div>
+        <div class="ig"><label>Theme Color</label><input type="color" id="newCatColor" value="#059669" style="height:38px;padding:2px"></div>
+      </div>
+      <div class="ig"><label>Display Order (Tab 1 & 3 Location: 1, 2, 3...)</label><input type="number" id="newCatOrder" value="8" min="1"></div>
+      <button class="btn-sm" style="width:100%;padding:8px;background:#16a34a" type="button" onclick="addNewCategory()">Add Category</button>
+    </div>
+
+    <!-- Category Positions / Ordering Manager -->
+    <div class="card">
+      <div class="ctitle">Manage Category Placement (Tab 1 & 3 Order)</div>
+      <div id="catOrderList"></div>
+      <button class="btn-sm" style="width:100%;padding:8px;margin-top:6px" type="button" onclick="saveCategoryOrder()">Apply Category Ordering</button>
+    </div>
+
+    <!-- Add Custom Drug -->
     <div class="card" style="border:1.5px dashed var(--prim);background:#f0f9ff">
       <div class="ctitle" style="color:var(--prim)">+ Add New Drug to Formulary</div>
       <div class="ig"><label>Drug Name</label><input type="text" id="newDrugName" placeholder="e.g. Dexmedetomidine"></div>
@@ -205,10 +277,7 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
           </select>
         </div>
       </div>
-      <div class="ig">
-        <label>Assign Category</label>
-        <select id="newDrugCat"></select>
-      </div>
+      <div class="ig"><label>Assign Category</label><select id="newDrugCat"></select></div>
       <button class="btn-sm" style="width:100%;padding:8px" type="button" onclick="addNewDrug()">Add Drug</button>
     </div>
 
@@ -236,7 +305,7 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
     </div>
 
     <div style="font-size:0.72rem;color:#854d0e;background:#fefce8;border:1px solid #fef08a;padding:8px;border-radius:6px;line-height:1.4">
-      <strong>DISCLAIMER:</strong> Intraoperative helper tool only. Correlate with standard clinical guidelines.
+      <strong>DISCLAIMER:</strong> Intraoperative cognitive reference tool only. Validate all calculations against standard hospital guidelines.
     </div>
   </section>
 </main>
@@ -251,43 +320,46 @@ nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-to
 </nav>
 
 <script>
+// Category baseline with order indexes
 const DEF_CATS = [
-  { id: "premed", name: "Premedication & Anticholinergics", color: "#8b5cf6", bg: "#f5f3ff", drugs: ["Atropine", "Glycopyrollate", "Midazolam"] },
-  { id: "opioid", name: "Opioids & Analgesia", color: "#059669", bg: "#ecfdf5", drugs: ["Fentanyl", "Remifentanil"] },
-  { id: "induction", name: "Induction Agents", color: "#ea580c", bg: "#fff7ed", drugs: ["Thiopentone", "Propofol", "Etomidate", "Ketamine"] },
-  { id: "relaxant", name: "Neuromuscular Blockers", color: "#0284c7", bg: "#f0f9ff", drugs: ["Suxa", "Atracurium", "Vecuronium", "Rocuronium"] },
-  { id: "analgesic", name: "Non-Opioid Analgesics", color: "#e11d48", bg: "#fff1f2", drugs: ["Paracetamol"] },
-  { id: "antiemetic", name: "Antiemetics & Corticosteroids", color: "#d97706", bg: "#fffbeb", drugs: ["Dexa", "Emeset"] },
-  { id: "reversal", name: "Neuromuscular Reversal", color: "#16a34a", bg: "#f0fdf4", drugs: ["Neostigmine", "Glyco_rev", "Sugammadex"] }
+  { id: "premed", name: "Premedication & Anticholinergics", color: "#8b5cf6", bg: "#f5f3ff", order: 1, drugs: ["Atropine", "Glycopyrollate", "Midazolam"] },
+  { id: "opioid", name: "Opioids & Analgesia", color: "#059669", bg: "#ecfdf5", order: 2, drugs: ["Fentanyl", "Remifentanil"] },
+  { id: "induction", name: "Induction Agents", color: "#ea580c", bg: "#fff7ed", order: 3, drugs: ["Thiopentone", "Propofol", "Etomidate", "Ketamine"] },
+  { id: "relaxant", name: "Neuromuscular Blockers", color: "#0284c7", bg: "#f0f9ff", order: 4, drugs: ["Succinylcholine", "Atracurium", "Vecuronium", "Rocuronium"] },
+  { id: "analgesic", name: "Non-Opioid Analgesics", color: "#e11d48", bg: "#fff1f2", order: 5, drugs: ["Paracetamol"] },
+  { id: "antiemetic", name: "Antiemetics & Corticosteroids", color: "#d97706", bg: "#fffbeb", order: 6, drugs: ["Dexa", "Emeset"] },
+  { id: "reversal", name: "Neuromuscular Reversal", color: "#16a34a", bg: "#f0fdf4", order: 7, drugs: ["Neostigmine", "Glyco_rev", "Sugammadex"] },
+  { id: "other", name: "Other Drugs", color: "#475569", bg: "#f8fafc", order: 8, drugs: ["Loxicard_IV"] }
 ];
 
 const DEF_DOSES = {
-  Atropine: { d: 0.02, u: "mg", min: 0.1, max: 0.5 },
-  Glycopyrollate: { d: 0.005, u: "mg", max: 0.2 },
-  Midazolam: { d: 0.1, u: "mg", max: 5.0 },
-  Fentanyl: { d: 1.5, u: "mcg", max: 100 },
-  Remifentanil: { d: 0.5, u: "mcg" },
-  Thiopentone: { d: 5.0, u: "mg", max: 500 },
-  Propofol: { d: 3.0, u: "mg" },
-  Etomidate: { d: 0.3, u: "mg", max: 20 },
-  Ketamine: { d: 2.0, u: "mg", max: 100 },
-  Suxa: { d: 2.0, u: "mg" },
-  Atracurium: { d: 0.5, u: "mg" },
-  Vecuronium: { d: 0.1, u: "mg" },
-  Rocuronium: { d: 0.6, u: "mg" },
-  Paracetamol: { d: 15.0, u: "mg", max: 1000 },
-  Dexa: { d: 0.15, u: "mg", max: 8.0 },
-  Emeset: { d: 0.1, u: "mg", max: 4.0 },
-  Neostigmine: { d: 0.05, u: "mg", max: 2.5 },
-  Glyco_rev: { d: 0.01, u: "mg", max: 0.5 },
-  Sugammadex: { d: 2.0, u: "mg" }
+  Atropine: { d: 0.02, u: "mg", min: 0.1, max: 0.5, desc: "0.02 mg/kg IV (Min 0.1 mg, Max 0.5 mg)" },
+  Glycopyrollate: { d: 0.005, u: "mg", max: 0.2, desc: "5 - 10 mcg/kg IV" },
+  Midazolam: { d: 0.1, u: "mg", max: 5.0, desc: "0.05 - 0.15 mg/kg IV" },
+  Fentanyl: { d: 1.5, u: "mcg", max: 100, desc: "1 - 2 mcg/kg bolus" },
+  Remifentanil: { d: 0.5, u: "mcg", desc: "Bolus: 0.5 - 1 mcg/kg | Maint: 0.1 - 0.5 mcg/kg/min" },
+  Thiopentone: { d: 5.0, u: "mg", max: 500, desc: "4 - 6 mg/kg IV" },
+  Propofol: { d: 3.0, u: "mg", desc: "Ind: 2.5 - 3.5 mg/kg | Maint: 100 - 250 mcg/kg/min | Sed: 0.5 - 1 mg/kg" },
+  Etomidate: { d: 0.3, u: "mg", max: 20, desc: "0.2 - 0.3 mg/kg IV" },
+  Ketamine: { d: 2.0, u: "mg", max: 100, desc: "Ind: 1 - 2 mg/kg | Analgesia: 0.25 - 0.5 mg/kg | Preempt: 0.15 - 0.25 mg/kg" },
+  Succinylcholine: { d: 2.0, u: "mg", desc: "IV: 1.5 - 2 mg/kg | IM: 3 - 4 mg/kg" },
+  Atracurium: { d: 0.5, u: "mg", desc: "Load: 0.5 mg/kg | Maint: 0.1 - 0.2 mg/kg q25-35m" },
+  Vecuronium: { d: 0.1, u: "mg", desc: "Load: 0.1 mg/kg | Maint: 0.02 - 0.03 mg/kg q30-45m" },
+  Rocuronium: { d: 0.6, u: "mg", desc: "Load: 0.6 - 1.2 mg/kg | Maint: 0.15 mg/kg q30-40m" },
+  Paracetamol: { d: 15.0, u: "mg", max: 1000, desc: "15 mg/kg IV (Max 1g q6h)" },
+  Dexa: { d: 0.15, u: "mg", max: 8.0, desc: "0.15 - 0.2 mg/kg IV" },
+  Emeset: { d: 0.1, u: "mg", max: 4.0, desc: "0.1 mg/kg IV (Max 4 mg)" },
+  Neostigmine: { d: 0.05, u: "mg", max: 2.5, desc: "0.05 mg/kg IV (50 mcg/kg)" },
+  Glyco_rev: { d: 0.01, u: "mg", max: 0.5, desc: "10 mcg/kg (with Neostigmine)" },
+  Sugammadex: { d: 2.0, u: "mg", desc: "2 - 4 mg/kg (Immediate reversal: 16 mg/kg)" },
+  Loxicard_IV: { d: 1.5, u: "mg", max: 100, desc: "1.5 mg/kg IV (Airway reflex blunting 90s pre-intubation)" }
 };
 
 const DEF_FORMULAS = { uncuffedK: 4.0, cuffedK: 3.5, depthK: 12.0, hrBase: 220 };
 
-let drugCats = JSON.parse(localStorage.getItem('pCats_v4')) || JSON.parse(JSON.stringify(DEF_CATS));
-let cfgDoses = JSON.parse(localStorage.getItem('pDoses_v4')) || JSON.parse(JSON.stringify(DEF_DOSES));
-let cfgFormulas = JSON.parse(localStorage.getItem('pFormulas_v4')) || Object.assign({}, DEF_FORMULAS);
+let drugCats = JSON.parse(localStorage.getItem('pCats_v5')) || JSON.parse(JSON.stringify(DEF_CATS));
+let cfgDoses = JSON.parse(localStorage.getItem('pDoses_v5')) || JSON.parse(JSON.stringify(DEF_DOSES));
+let cfgFormulas = JSON.parse(localStorage.getItem('pFormulas_v5')) || Object.assign({}, DEF_FORMULAS);
 let selDrugs = new Set();
 let patientType = 'child';
 let patientSex = 'Male';
@@ -321,17 +393,24 @@ function setCat(type){
   if(type === 'child'){
     bC.className = 'btn-sm'; bI.className = 'btn-gray';
     bY.style.display = 'block'; bM.style.display = 'none';
-    if(!document.getElementById('ay').value && document.getElementById('am').value){
-      document.getElementById('ay').value = Math.max(1, (parseFloat(document.getElementById('am').value)/12).toFixed(1));
-    }
   } else {
     bI.className = 'btn-sm'; bC.className = 'btn-gray';
     bY.style.display = 'none'; bM.style.display = 'block';
-    if(!document.getElementById('am').value && document.getElementById('ay').value){
-      document.getElementById('am').value = Math.round(parseFloat(document.getElementById('ay').value)*12);
-    }
   }
   calc();
+}
+
+function resetPatientInputs(){
+  sVal('ay', '');
+  sVal('am', '');
+  sVal('ga', '');
+  sVal('wt', '');
+  selDrugs.clear();
+  setSex('Male');
+  setCat('child');
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('sel'));
+  calc();
+  alert('Patient parameters and drug selections reset.');
 }
 
 function togglePill(pill, drug){
@@ -366,35 +445,48 @@ function getAges(){
   return { yrs, mos };
 }
 
+function getSortedCategories(){
+  return [...drugCats].sort((a,b) => (a.order || 99) - (b.order || 99));
+}
+
 function buildPillSelector(){
   const c = document.getElementById('pillsContainer');
   if(!c) return;
   c.innerHTML = '';
-  drugCats.forEach(cat => {
+  const sortedCats = getSortedCategories();
+
+  sortedCats.forEach(cat => {
     const box = document.createElement('div');
     box.className = 'cat-box';
     box.style.background = cat.bg;
-    box.style.borderColor = cat.color + '40';
+    box.style.borderColor = (cat.color || '#cbd5e1') + '40';
     box.innerHTML = `<div class="cat-hdr" style="color:${cat.color}">${cat.name}</div><div class="pgrid" id="pgrid_${cat.id}"></div>`;
     c.appendChild(box);
 
     const grid = box.querySelector('.pgrid');
-    cat.drugs.forEach(d => {
+    (cat.drugs || []).forEach(d => {
       const p = document.createElement('div');
       p.className = `pill ${selDrugs.has(d)?'sel':''}`;
       p.id = `pill_${d}`;
-      p.innerText = d === 'Glyco_rev' ? 'Glycopyrollate (Rev)' : d;
+      let displayName = d;
+      if(d === 'Glyco_rev') displayName = 'Glycopyrollate (Rev)';
+      if(d === 'Loxicard_IV') displayName = 'IV Lignocaine (Loxicard)';
+      p.innerText = displayName;
       p.onclick = () => togglePill(p, d);
       grid.appendChild(p);
     });
   });
 }
 
+function roundToHalf(val){
+  return (Math.round(val * 2) / 2).toFixed(1);
+}
+
 function calc(){
   const { yrs, mos } = getAges();
   const wt = parseFloat(document.getElementById('wt').value) || 0;
 
-  // Header Badge includes Sex
+  // Header Badge
   const sexInitial = patientSex === 'Male' ? 'M' : 'F';
   sText('sumBadge', `${sexInitial} | ${patientType==='child' ? (yrs>0?yrs+' yr':'-- yr') : (mos>0?mos+' mo':'-- mo')} | ${wt>0?wt+' kg':'-- kg'}`);
 
@@ -410,7 +502,7 @@ function calc(){
     }
   }
 
-  // Corrected age
+  // Prematurity correction
   const ga = parseFloat(document.getElementById('ga').value);
   if(patientType === 'infant' && !isNaN(ga) && ga < 40 && mos > 0){
     const pw = 40 - ga;
@@ -423,11 +515,6 @@ function calc(){
   renderGA(wt);
   calcLocal(wt);
   calcEmerg(wt);
-}
-
-// 0.5 mm Rounding Helper
-function roundToHalf(val){
-  return (Math.round(val * 2) / 2).toFixed(1);
 }
 
 function calcEquipment(yrs, mos, wt){
@@ -443,30 +530,16 @@ function calcEquipment(yrs, mos, wt){
 
   let blade = mos < 1 ? "Miller 0" : mos <= 12 ? "Miller 1" : yrs <= 5 ? "Mac 2 / Miller 1.5" : yrs <= 10 ? "Mac 2-3" : "Mac 3";
 
-  // Tube calculations: 0.5 mm Practical Rounding + Calculated Exact
-  let uncuffedDisplay = "--";
-  let cuffedDisplay = "--";
-  let depth = "--";
-
+  let uncuffedDisplay = "--", cuffedDisplay = "--", depth = "--";
   if(yrs < 1){
-    if(mos < 1){
-      uncuffedDisplay = `3.0 mm ID (Preterm/Neonate)`;
-      cuffedDisplay = `2.5 - 3.0 mm ID`;
-      depth = "9.0 cm";
-    } else {
-      uncuffedDisplay = `3.5 mm ID (Infant)`;
-      cuffedDisplay = `3.0 mm ID`;
-      depth = "10.0 cm";
-    }
+    uncuffedDisplay = mos < 1 ? "3.0 mm ID (Preterm)" : "3.5 mm ID (Infant)";
+    cuffedDisplay = mos < 1 ? "2.5 - 3.0 mm ID" : "3.0 mm ID";
+    depth = mos < 1 ? "9.0 cm" : "10.0 cm";
   } else {
-    const rawUncuffed = (yrs / 4) + cfgFormulas.uncuffedK;
-    const rawCuffed = (yrs / 4) + cfgFormulas.cuffedK;
-
-    const roundUncuffed = roundToHalf(rawUncuffed);
-    const roundCuffed = roundToHalf(rawCuffed);
-
-    uncuffedDisplay = `<strong>${roundUncuffed} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawUncuffed.toFixed(2)})</span>`;
-    cuffedDisplay = `<strong>${roundCuffed} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawCuffed.toFixed(2)})</span>`;
+    const rawU = (yrs / 4) + cfgFormulas.uncuffedK;
+    const rawC = (yrs / 4) + cfgFormulas.cuffedK;
+    uncuffedDisplay = `<strong>${roundToHalf(rawU)} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawU.toFixed(2)})</span>`;
+    cuffedDisplay = `<strong>${roundToHalf(rawC)} mm ID</strong> <span style="font-size:0.75rem;color:var(--mut)">(Calc: ${rawC.toFixed(2)})</span>`;
     depth = `${((yrs / 2) + cfgFormulas.depthK).toFixed(1)} cm`;
   }
 
@@ -488,14 +561,53 @@ function calcEquipment(yrs, mos, wt){
   sText('subHr', `Formula: ${cfgFormulas.hrBase} - Age`);
 }
 
+// Generate Detailed Multi-Tier Dose Subtitles
+function getDetailedSubDose(d, wt){
+  if(wt <= 0) return '';
+  if(d === 'Propofol'){
+    return `
+      • <strong>GA Induction:</strong> ${(wt*2.5).toFixed(1)}–${(wt*3.5).toFixed(1)} mg<br>
+      • <strong>GA Maint:</strong> ${(wt*0.1).toFixed(1)}–${(wt*0.25).toFixed(1)} mg/min (${(wt*6).toFixed(0)}–${(wt*15).toFixed(0)} mg/hr)<br>
+      • <strong>Sedation:</strong> ${(wt*0.5).toFixed(1)}–${(wt*1.0).toFixed(1)} mg bolus + ${(wt*0.05).toFixed(1)}–${(wt*0.1).toFixed(1)} mg/min
+    `;
+  }
+  if(d === 'Ketamine'){
+    return `
+      • <strong>Anaesthetic Induction:</strong> ${(wt*1).toFixed(1)}–${(wt*2).toFixed(1)} mg IV (${(wt*4).toFixed(1)}–${(wt*6).toFixed(1)} mg IM)<br>
+      • <strong>Analgesic Bolus:</strong> ${(wt*0.25).toFixed(1)}–${(wt*0.5).toFixed(1)} mg IV<br>
+      • <strong>Pre-emptive Analgesia:</strong> ${(wt*0.15).toFixed(1)}–${(wt*0.25).toFixed(1)} mg IV
+    `;
+  }
+  if(d === 'Remifentanil'){
+    return `
+      • <strong>Loading Bolus:</strong> ${(wt*0.5).toFixed(1)}–${(wt*1.0).toFixed(1)} mcg over 60s<br>
+      • <strong>Maintenance Infusion:</strong> ${(wt*0.1).toFixed(2)}–${(wt*0.5).toFixed(2)} mcg/min
+    `;
+  }
+  if(d === 'Atracurium'){
+    return `• <strong>Intubating Load:</strong> ${(wt*0.5).toFixed(1)} mg<br>• <strong>Top-up:</strong> ${(wt*0.1).toFixed(1)}–${(wt*0.2).toFixed(1)} mg (repeat q25–35 min)`;
+  }
+  if(d === 'Vecuronium'){
+    return `• <strong>Intubating Load:</strong> ${(wt*0.1).toFixed(2)} mg<br>• <strong>Top-up:</strong> ${(wt*0.02).toFixed(2)}–${(wt*0.03).toFixed(2)} mg (repeat q30–45 min)`;
+  }
+  if(d === 'Rocuronium'){
+    return `• <strong>Intubating Load:</strong> ${(wt*0.6).toFixed(1)} mg (${(wt*1.2).toFixed(1)} mg RSI)<br>• <strong>Top-up:</strong> ${(wt*0.15).toFixed(1)} mg (repeat q30–40 min)`;
+  }
+  if(d === 'Loxicard_IV'){
+    return `• <strong>IV Reflex Attenuation:</strong> ${(wt*1.5).toFixed(1)} mg (${(wt*1.5/20).toFixed(2)} mL of 2% Lignocaine)`;
+  }
+  return '';
+}
+
 function renderGA(wt = parseFloat(document.getElementById('wt').value) || 0){
   const c = document.getElementById('gaCategoryContainer');
   if(!c) return;
   c.innerHTML = '';
   const { yrs } = getAges();
+  const sortedCats = getSortedCategories();
 
-  drugCats.forEach(cat => {
-    let drugs = cat.drugs.filter(d => !(d === 'Atropine' && yrs >= 2));
+  sortedCats.forEach(cat => {
+    let drugs = (cat.drugs || []).filter(d => !(d === 'Atropine' && yrs >= 2));
     if(drugs.length === 0) return;
 
     const sorted = [...drugs.filter(d => selDrugs.has(d)), ...drugs.filter(d => !selDrugs.has(d))];
@@ -503,7 +615,7 @@ function renderGA(wt = parseFloat(document.getElementById('wt').value) || 0){
     const box = document.createElement('div');
     box.className = 'cat-box';
     box.style.background = cat.bg;
-    box.style.borderColor = cat.color + '40';
+    box.style.borderColor = (cat.color || '#cbd5e1') + '40';
     box.innerHTML = `<div class="cat-hdr" style="color:${cat.color}">${cat.name}</div><div class="cards-list"></div>`;
     c.appendChild(box);
 
@@ -521,14 +633,21 @@ function renderGA(wt = parseFloat(document.getElementById('wt').value) || 0){
         doseTxt = `${val < 10 && item.u === 'mg' ? val.toFixed(2) : val.toFixed(1)} ${item.u}`;
       }
 
+      let displayName = d;
+      if(d === 'Glyco_rev') displayName = 'Glycopyrollate (Rev)';
+      if(d === 'Loxicard_IV') displayName = 'IV Lignocaine (Loxicard)';
+
+      const detailHtml = getDetailedSubDose(d, wt);
+
       const card = document.createElement('div');
       card.className = `dcard ${isSel ? 'sel' : ''}`;
       card.innerHTML = `
         <div class="dhdr">
-          <span style="font-size:0.85rem;font-weight:700">${d==='Glyco_rev'?'Glycopyrollate (Rev)':d} ${isSel?'★':''}</span>
+          <span style="font-size:0.85rem;font-weight:700">${displayName} ${isSel?'★':''}</span>
           <span style="font-size:0.92rem;font-weight:800;color:var(--prim)">${doseTxt}</span>
         </div>
-        <small style="color:var(--mut);font-size:0.7rem">Rate: ${item.d} ${item.u}/kg</small>
+        <small style="color:var(--mut);font-size:0.7rem;display:block;margin-top:2px">${item.desc || ('Rate: ' + item.d + ' ' + item.u + '/kg')}</small>
+        ${detailHtml ? `<div style="font-size:0.72rem;background:#f8fafc;padding:5px;border-radius:4px;margin-top:4px;line-height:1.35;color:#334155;border:1px solid #f1f5f9">${detailHtml}</div>` : ''}
       `;
       list.appendChild(card);
     });
@@ -552,26 +671,98 @@ function calcLocal(wt){
 
 function calcEmerg(wt){
   if(wt <= 0){
-    ['emAdr','emAtr','emEph','emHyd','emSux'].forEach(id => sText(id, '--'));
+    ['emgAdrCa','emgAdrAnaIm','emgAdrAnaIv','emgAdrEt','emgLarynSux','emgBronchoHydro','emgLipid','emAtr','emEph'].forEach(id => sText(id, '--'));
     return;
   }
-  sText('emAdr', `${(wt*10).toFixed(0)} mcg (${(wt*0.1).toFixed(2)} mL 1:10k)`);
+  // Adrenaline
+  sText('emgAdrCa', `${(wt*10).toFixed(0)} mcg (${(wt*0.1).toFixed(2)} mL 1:10,000)`);
+  
+  const imAnaph = Math.min(wt * 10, 500);
+  sText('emgAdrAnaIm', `${imAnaph.toFixed(0)} mcg (${(imAnaph/1000).toFixed(2)} mL 1:1,000)`);
+  sText('emgAdrAnaIv', `${(wt*1).toFixed(0)} mcg (${(wt*0.1).toFixed(1)} mL 1:100,000)`);
+  sText('emgAdrEt', `${(wt*50).toFixed(0)}–${(wt*100).toFixed(0)} mcg (${(wt*0.5).toFixed(1)}–${(wt*1.0).toFixed(1)} mL 1:10,000)`);
+
+  // Crisis complications
+  sText('emgLarynSux', `IV: ${(wt*1.5).toFixed(1)} mg | IM: ${(wt*4).toFixed(1)} mg`);
+  sText('emgBronchoHydro', `${(wt*4).toFixed(0)} mg IV`);
+  sText('emgLipid', `${(wt*1.5).toFixed(1)} mL bolus; ${(wt*0.25).toFixed(1)} mL/min infusion`);
+
+  // Resus Drugs
   let at = Math.min(Math.max(wt*0.02, 0.1), 0.5);
   sText('emAtr', `${at.toFixed(2)} mg IV`);
   sText('emEph', `${(wt*0.15).toFixed(1)} mg IV`);
-  sText('emHyd', `${(wt*4).toFixed(0)} mg IV`);
-  sText('emSux', `IV: ${(wt*2).toFixed(1)} mg | IM: ${(wt*4).toFixed(1)} mg`);
 }
 
-// Settings: Categories Dropdown & Add Drug
+// Category Management in Settings
+function renderCategoryOrderManager(){
+  const c = document.getElementById('catOrderList');
+  if(!c) return;
+  c.innerHTML = '';
+  const sorted = getSortedCategories();
+
+  sorted.forEach(cat => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;padding:4px;border-bottom:1px solid #f1f5f9';
+    row.innerHTML = `
+      <span style="font-size:0.75rem;font-weight:700;color:${cat.color}">${cat.name}</span>
+      <div style="display:flex;gap:4px;align-items:center">
+        <label style="font-size:0.7rem;color:var(--mut);margin:0">Pos:</label>
+        <input type="number" min="1" max="20" value="${cat.order || 1}" id="order_${cat.id}" style="width:50px;padding:2px 4px;font-size:0.75rem">
+      </div>
+    `;
+    c.appendChild(row);
+  });
+}
+
+function saveCategoryOrder(){
+  drugCats.forEach(cat => {
+    const el = document.getElementById(`order_${cat.id}`);
+    if(el && !isNaN(parseInt(el.value))){
+      cat.order = parseInt(el.value);
+    }
+  });
+  localStorage.setItem('pCats_v5', JSON.stringify(drugCats));
+  buildPillSelector();
+  renderGA();
+  renderCategoryOrderManager();
+  alert('Category order updated across Tab 1 & Tab 3!');
+}
+
+function addNewCategory(){
+  const name = document.getElementById('newCatName').value.trim();
+  const color = document.getElementById('newCatColor').value;
+  const order = parseInt(document.getElementById('newCatOrder').value) || 9;
+
+  if(!name){
+    alert('Please enter a valid Category Name.');
+    return;
+  }
+  const id = 'cat_' + Date.now();
+  drugCats.push({
+    id: id,
+    name: name,
+    color: color,
+    bg: color + '15',
+    order: order,
+    drugs: []
+  });
+
+  localStorage.setItem('pCats_v5', JSON.stringify(drugCats));
+  document.getElementById('newCatName').value = '';
+  populateCategorySelect();
+  renderCategoryOrderManager();
+  buildPillSelector();
+  alert(`Category "${name}" added at position ${order}!`);
+}
+
 function populateCategorySelect(){
   const s = document.getElementById('newDrugCat');
   if(!s) return;
   s.innerHTML = '';
-  drugCats.forEach(cat => {
+  getSortedCategories().forEach(cat => {
     const opt = document.createElement('option');
     opt.value = cat.id;
-    opt.innerText = cat.name;
+    opt.innerText = `${cat.order}. ${cat.name}`;
     s.appendChild(opt);
   });
 }
@@ -587,24 +778,19 @@ function addNewDrug(){
     return;
   }
 
-  // Add or update drug in formulary
-  cfgDoses[name] = { d: dose, u: unit };
+  cfgDoses[name] = { d: dose, u: unit, desc: `${dose} ${unit}/kg` };
 
-  // Add drug into selected category array
   const cat = drugCats.find(c => c.id === catId);
   if(cat && !cat.drugs.includes(name)){
     cat.drugs.push(name);
   }
 
-  // Persist
-  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
-  localStorage.setItem('pCats_v4', JSON.stringify(drugCats));
+  localStorage.setItem('pDoses_v5', JSON.stringify(cfgDoses));
+  localStorage.setItem('pCats_v5', JSON.stringify(drugCats));
 
-  // Clear inputs
   document.getElementById('newDrugName').value = '';
   document.getElementById('newDrugDose').value = '';
 
-  // Refresh Views
   buildPillSelector();
   renderSettings();
   calc();
@@ -619,8 +805,11 @@ function renderSettings(){
     const item = cfgDoses[d];
     const row = document.createElement('div');
     row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;margin-bottom:6px';
+    let displayName = d;
+    if(d === 'Glyco_rev') displayName = 'Glycopyrollate (Rev)';
+    if(d === 'Loxicard_IV') displayName = 'IV Lignocaine (Loxicard)';
     row.innerHTML = `
-      <span style="font-size:0.75rem;font-weight:600">${d}</span>
+      <span style="font-size:0.75rem;font-weight:600">${displayName}</span>
       <div style="display:flex;gap:4px;align-items:center">
         <input type="number" step="0.001" value="${item.d}" id="setInp_${d}" style="width:65px;padding:3px 5px;font-size:0.75rem">
         <span style="font-size:0.7rem;color:var(--mut);min-width:35px">${item.u}/kg</span>
@@ -640,7 +829,7 @@ function saveDoses(){
     const el = document.getElementById(`setInp_${d}`);
     if(el && !isNaN(parseFloat(el.value))) cfgDoses[d].d = parseFloat(el.value);
   });
-  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
+  localStorage.setItem('pDoses_v5', JSON.stringify(cfgDoses));
   calc();
   alert('Drug doses saved and updated across app!');
 }
@@ -648,8 +837,10 @@ function saveDoses(){
 function restoreDoses(){
   cfgDoses = JSON.parse(JSON.stringify(DEF_DOSES));
   drugCats = JSON.parse(JSON.stringify(DEF_CATS));
-  localStorage.setItem('pDoses_v4', JSON.stringify(cfgDoses));
-  localStorage.setItem('pCats_v4', JSON.stringify(drugCats));
+  localStorage.setItem('pDoses_v5', JSON.stringify(cfgDoses));
+  localStorage.setItem('pCats_v5', JSON.stringify(drugCats));
+  populateCategorySelect();
+  renderCategoryOrderManager();
   buildPillSelector();
   renderSettings();
   calc();
@@ -661,14 +852,14 @@ function saveFormulas(){
   cfgFormulas.cuffedK = parseFloat(document.getElementById('fEc').value) || 3.5;
   cfgFormulas.depthK = parseFloat(document.getElementById('fEd').value) || 12.0;
   cfgFormulas.hrBase = parseFloat(document.getElementById('fHr').value) || 220;
-  localStorage.setItem('pFormulas_v4', JSON.stringify(cfgFormulas));
+  localStorage.setItem('pFormulas_v5', JSON.stringify(cfgFormulas));
   calc();
-  alert('Equipment & Monitor formulas saved!');
+  alert('Formulas saved!');
 }
 
 function restoreFormulas(){
   cfgFormulas = Object.assign({}, DEF_FORMULAS);
-  localStorage.setItem('pFormulas_v4', JSON.stringify(cfgFormulas));
+  localStorage.setItem('pFormulas_v5', JSON.stringify(cfgFormulas));
   renderSettings();
   calc();
   alert('Default formulas restored!');
@@ -681,13 +872,13 @@ function saveDoc(){
     d: document.getElementById('dd').value,
     w: document.getElementById('dw').value
   };
-  localStorage.setItem('pDoc_v4', JSON.stringify(prof));
+  localStorage.setItem('pDoc_v5', JSON.stringify(prof));
   updateHeaderDoctor();
   alert('Doctor profile saved!');
 }
 
 function updateHeaderDoctor(){
-  const prof = JSON.parse(localStorage.getItem('pDoc_v4'));
+  const prof = JSON.parse(localStorage.getItem('pDoc_v5'));
   if(prof && prof.n){
     sText('hdrDocName', prof.n);
     const box = document.getElementById('hdrDoc');
@@ -696,7 +887,7 @@ function updateHeaderDoctor(){
 }
 
 function loadDoc(){
-  const prof = JSON.parse(localStorage.getItem('pDoc_v4'));
+  const prof = JSON.parse(localStorage.getItem('pDoc_v5'));
   if(prof){
     sVal('dn', prof.n || '');
     sVal('dr', prof.r || '');
@@ -709,6 +900,7 @@ function loadDoc(){
 window.onload = function(){
   try {
     populateCategorySelect();
+    renderCategoryOrderManager();
     buildPillSelector();
     loadDoc();
     renderSettings();
