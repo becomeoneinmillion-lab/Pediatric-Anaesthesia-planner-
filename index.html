@@ -1,700 +1,815 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Pediatric Anaesthesia Planner</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="theme-color" content="#0b1120">
-  <style>
-    :root {
-      --bg: #0b1120;
-      --card: #1e293b;
-      --sub: #162032;
-      --border: #334155;
-      --prim: #06b6d4;
-      --acc: #38bdf8;
-      --txt: #f8fafc;
-      --mut: #94a3b8;
-      --danger: #ef4444;
-      --nav-h: 60px;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    body {
-      background: var(--bg);
-      color: var(--txt);
-      min-height: 100vh;
-      padding-bottom: calc(var(--nav-h) + 16px);
-    }
-    header {
-      background: #0f172a;
-      border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--prim);
-    }
-    .badge {
-      font-size: 0.75rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      padding: 4px 8px;
-      border-radius: 12px;
-      color: var(--acc);
-      font-weight: 600;
-    }
-    main {
-      padding: 12px;
-      max-width: 550px;
-      margin: 0 auto;
-    }
-    .tab {
-      display: none;
-    }
-    .tab.active {
-      display: block;
-    }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      margin-bottom: 12px;
-    }
-    .ctitle {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: var(--mut);
-      text-transform: uppercase;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .g2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .ig {
-      margin-bottom: 8px;
-    }
-    label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    input {
-      width: 100%;
-      background: var(--sub);
-      border: 1px solid var(--border);
-      color: #fff;
-      padding: 8px 10px;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      outline: none;
-    }
-    input:focus {
-      border-color: var(--prim);
-    }
-    .btn-sm {
-      background: #334155;
-      color: #fff;
-      border: none;
-      padding: 4px 8px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      cursor: pointer;
-    }
-    .pgroup {
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-      border-bottom: 1px dashed var(--border);
-    }
-    .pgroup:last-child {
-      border: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .pgrid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-    .pill {
-      background: #0f172a;
-      border: 1px solid var(--border);
-      color: var(--mut);
-      padding: 6px 10px;
-      border-radius: 16px;
-      font-size: 0.75rem;
-      cursor: pointer;
-      user-select: none;
-    }
-    .pill.sel {
-      background: #0284c7;
-      border-color: var(--acc);
-      color: #fff;
-      font-weight: 700;
-    }
-    .row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 8px 0;
-      border-bottom: 1px solid #283548;
-    }
-    .row:last-child {
-      border-bottom: none;
-    }
-    .lbl {
-      font-size: 0.8rem;
-      color: var(--mut);
-    }
-    .val {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: #fff;
-      text-align: right;
-    }
-    .badge-c {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      color: #000;
-      margin-left: 4px;
-    }
-    .dcard {
-      background: var(--sub);
-      border-radius: 6px;
-      padding: 8px 10px;
-      margin-bottom: 6px;
-      border-left: 4px solid #475569;
-    }
-    .dcard.sel {
-      border-left-color: var(--prim);
-      background: #172a45;
-    }
-    .dhdr {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.85rem;
-      font-weight: 700;
-    }
-    .emg {
-      border-left: 4px solid var(--danger);
-      background: #251419;
-      border-radius: 6px;
-      padding: 10px;
-      margin-bottom: 8px;
-    }
-    nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: var(--nav-h);
-      background: #090e17;
-      border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      z-index: 100;
-      padding-bottom: env(safe-area-inset-bottom, 0);
-    }
-    .nbtn {
-      background: none;
-      border: none;
-      color: var(--mut);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.6rem;
-      font-weight: 600;
-      gap: 2px;
-      cursor: pointer;
-    }
-    .nbtn.active {
-      color: var(--prim);
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Pediatric Anaesthesia Planner</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#ffffff">
+<style>
+:root {
+--bg: #f8fafc;
+--card: #ffffff;
+--card-sub: #f1f5f9;
+--border: #e2e8f0;
+--border-dark: #cbd5e1;
+--prim: #0284c7;
+--prim-dark: #0369a1;
+--prim-light: #e0f2fe;
+--txt: #0f172a;
+--txt-muted: #64748b;
+--danger-bg: #fff1f2;
+--danger-border: #fca5a5;
+--danger-txt: #be123c;
+--nav-h: 62px;
+}
+* {
+box-sizing: border-box;
+margin: 0;
+padding: 0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+-webkit-tap-highlight-color: transparent;
+}
+body {
+background: var(--bg);
+color: var(--txt);
+min-height: 100vh;
+padding-bottom: calc(var(--nav-h) + 20px);
+}
+header {
+background: #ffffff;
+border-bottom: 1px solid var(--border);
+padding: 12px 16px;
+position: sticky;
+top: 0;
+z-index: 50;
+display: flex;
+justify-content: space-between;
+align-items: center;
+box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+header h1 {
+font-size: 0.95rem;
+font-weight: 700;
+color: var(--prim-dark);
+letter-spacing: -0.2px;
+}
+.badge {
+font-size: 0.75rem;
+background: var(--prim-light);
+border: 1px solid #bae6fd;
+padding: 4px 10px;
+border-radius: 999px;
+color: var(--prim-dark);
+font-weight: 700;
+}
+main {
+padding: 14px;
+max-width: 550px;
+margin: 0 auto;
+}
+.tab {
+display: none;
+}
+.tab.active {
+display: block;
+animation: fadeIn 0.15s ease-out;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(3px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.card {
+background: var(--card);
+border: 1px solid var(--border);
+border-radius: 12px;
+padding: 14px;
+margin-bottom: 12px;
+box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.ctitle {
+font-size: 0.78rem;
+font-weight: 700;
+color: var(--txt-muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-bottom: 10px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+.category-pills {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+margin-bottom: 12px;
+}
+.cat-btn {
+background: #f1f5f9;
+border: 1.5px solid var(--border-dark);
+color: var(--txt-muted);
+padding: 10px;
+border-radius: 8px;
+font-size: 0.82rem;
+font-weight: 700;
+cursor: pointer;
+text-align: center;
+transition: all 0.15s ease;
+}
+.cat-btn.active {
+background: var(--prim-light);
+border-color: var(--prim);
+color: var(--prim-dark);
+box-shadow: 0 0 0 1px var(--prim);
+}
+.g2 {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 10px;
+}
+.ig {
+margin-bottom: 10px;
+}
+label {
+display: block;
+font-size: 0.75rem;
+font-weight: 600;
+margin-bottom: 5px;
+color: var(--txt);
+}
+input {
+width: 100%;
+background: #ffffff;
+border: 1px solid var(--border-dark);
+color: var(--txt);
+padding: 9px 11px;
+border-radius: 8px;
+font-size: 0.92rem;
+outline: none;
+transition: border-color 0.15s ease;
+}
+input:focus {
+border-color: var(--prim);
+box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
+}
+.btn-sm {
+background: #e2e8f0;
+color: #334155;
+border: none;
+padding: 4px 10px;
+border-radius: 6px;
+font-size: 0.72rem;
+font-weight: 700;
+cursor: pointer;
+}
+.btn-sm:hover {
+background: #cbd5e1;
+}
+.pgroup {
+padding-bottom: 10px;
+margin-bottom: 10px;
+border-bottom: 1px dashed var(--border);
+}
+.pgroup:last-child {
+border: none;
+margin-bottom: 0;
+padding-bottom: 0;
+}
+.pgrid {
+display: flex;
+flex-wrap: wrap;
+gap: 7px;
+}
+.pill {
+background: #f8fafc;
+border: 1px solid var(--border-dark);
+color: #475569;
+padding: 7px 12px;
+border-radius: 20px;
+font-size: 0.78rem;
+font-weight: 600;
+cursor: pointer;
+user-select: none;
+transition: all 0.15s ease;
+}
+.pill.sel {
+background: var(--prim);
+border-color: var(--prim-dark);
+color: #ffffff;
+box-shadow: 0 1px 4px rgba(2, 132, 199, 0.35);
+}
+.row {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 9px 0;
+border-bottom: 1px solid #f1f5f9;
+}
+.row:last-child {
+border-bottom: none;
+}
+.lbl {
+font-size: 0.82rem;
+color: var(--txt-muted);
+}
+.val {
+font-size: 0.92rem;
+font-weight: 700;
+color: var(--txt);
+text-align: right;
+}
+.badge-c {
+display: inline-block;
+padding: 2px 7px;
+border-radius: 4px;
+font-size: 0.7rem;
+font-weight: 700;
+margin-left: 6px;
+border: 1px solid rgba(0,0,0,0.1);
+}
+.dcard {
+background: #ffffff;
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 10px 12px;
+margin-bottom: 8px;
+border-left: 4px solid #94a3b8;
+box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+}
+.dcard.sel {
+border-left-color: var(--prim);
+background: #f0f9ff;
+border-color: #bae6fd;
+}
+.dhdr {
+display: flex;
+justify-content: space-between;
+align-items: baseline;
+font-size: 0.88rem;
+font-weight: 700;
+}
+.emg {
+border-left: 4px solid #e11d48;
+background: var(--danger-bg);
+border-radius: 8px;
+padding: 11px;
+margin-bottom: 10px;
+border-top: 1px solid #ffe4e6;
+border-right: 1px solid #ffe4e6;
+border-bottom: 1px solid #ffe4e6;
+}
+nav {
+position: fixed;
+bottom: 0;
+left: 0;
+right: 0;
+height: var(--nav-h);
+background: #ffffff;
+border-top: 1px solid var(--border);
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+z-index: 100;
+padding-bottom: env(safe-area-inset-bottom, 0);
+box-shadow: 0 -2px 6px rgba(0,0,0,0.03);
+}
+.nbtn {
+background: none;
+border: none;
+color: var(--txt-muted);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+font-size: 0.62rem;
+font-weight: 700;
+gap: 3px;
+cursor: pointer;
+}
+.nbtn.active {
+color: var(--prim);
+}
+</style>
 </head>
 <body>
-
 <header>
-  <h1>Pediatric Anaesthesia Planner</h1>
-  <div id="sumBadge" class="badge">0 mo | -- kg</div>
+<h1>Pediatric Anaesthesia Planner</h1>
+<div id="sumBadge" class="badge">Child | -- kg</div>
 </header>
-
 <main>
-  <!-- TAB 1: INPUTS -->
-  <section id="t1" class="tab active">
-    <div class="card">
-      <div class="ctitle">Patient Inputs</div>
-      <div class="g2">
-        <div class="ig">
-          <label for="ay">Age (Years)</label>
-          <input type="number" id="ay" min="0" max="18" step="1" placeholder="e.g. 3">
-        </div>
-        <div class="ig">
-          <label for="am">Age (Months)</label>
-          <input type="number" id="am" min="0" max="216" step="1" placeholder="Click for Corr">
-        </div>
-      </div>
-
-      <div id="corrBox" style="display:none; background:#111b2b; padding:8px; border-radius:6px; margin-bottom:8px; border:1px dashed var(--acc);">
-        <div class="g2">
-          <div>
-            <label for="ga" style="font-size:0.7rem;">GA at birth (wks)</label>
-            <input type="number" id="ga" min="24" max="40" placeholder="e.g. 32">
-          </div>
-          <div>
-            <label style="font-size:0.7rem;">Corrected Age</label>
-            <div id="corrTxt" style="font-size:0.8rem; font-weight:700; padding-top:8px;">--</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="ig">
-        <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-          <label for="wt">Weight (kg)</label>
-          <button class="btn-sm" id="estWtBtn" type="button">Estimate Wt</button>
-        </div>
-        <input type="number" id="wt" min="0.5" max="100" step="0.1" placeholder="Enter weight in kg">
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="ctitle">Available Drugs</div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" id="p-atro" data-d="Atropine" style="display:none;">Atropine</div>
-          <div class="pill" data-d="Glycopyrollate">Glycopyrollate</div>
-          <div class="pill" data-d="Midazolam">Midazolam</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Fentanyl">Fentanyl</div>
-          <div class="pill" data-d="Remifentanil">remifentanyl</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Thiopentone">Thiopentone</div>
-          <div class="pill" data-d="Propofol">Propofol</div>
-          <div class="pill" data-d="Etomidate">Etomidate</div>
-          <div class="pill" data-d="Ketamine">Ketamine</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Suxa">Suxa</div>
-          <div class="pill" data-d="Atracurium">Atracurium</div>
-          <div class="pill" data-d="Vecuronium">vecuronium</div>
-          <div class="pill" data-d="Rocuronium">Rocuronium</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Paracetamol">Paracetamol</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Dexa">Dexa</div>
-          <div class="pill" data-d="Emeset">Emeset</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Neostigmine">Neostigmine</div>
-          <div class="pill" data-d="Glyco_rev">Glycopyrollate (Rev)</div>
-        </div>
-      </div>
-      <div class="pgroup">
-        <div class="pgrid">
-          <div class="pill" data-d="Sugammadex">Sugammadex</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- TAB 2: EQUIPMENT -->
-  <section id="t2" class="tab">
-    <div class="card">
-      <div class="ctitle">Airway Equipment</div>
-      <div class="row"><span class="lbl">Mask Size</span><span class="val" id="eqM">--</span></div>
-      <div class="row"><span class="lbl">Airway Size & Color</span><span class="val" id="eqA">--</span></div>
-      <div class="row"><span class="lbl">Laryngoscope Blade</span><span class="val" id="eqB">--</span></div>
-      <div class="row"><span class="lbl">ETT Uncuffed (ID mm)</span><span class="val" id="eqEu">--</span></div>
-      <div class="row"><span class="lbl">ETT Cuffed (ID mm)</span><span class="val" id="eqEc">--</span></div>
-      <div class="row"><span class="lbl">ETT Depth (Oral Lip)</span><span class="val" id="eqEd">--</span></div>
-    </div>
-    <div class="card">
-      <div class="ctitle">Ventilator & Monitor</div>
-      <div class="row"><span class="lbl">VT (6 - 8 mL/kg)</span><span class="val" id="eqVt">--</span></div>
-      <div class="row"><span class="lbl">RR (bpm)</span><span class="val" id="eqRr">--</span></div>
-      <div class="row"><span class="lbl">HR Max (Threshold)</span><span class="val" id="eqHr">--</span></div>
-    </div>
-  </section>
-
-  <!-- TAB 3: GA DRUGS -->
-  <section id="t3" class="tab">
-    <div class="ctitle" style="margin:4px;">GA Doses (Selected First)</div>
-    <div id="gaList"></div>
-  </section>
-
-  <!-- TAB 4: LOCAL -->
-  <section id="t4" class="tab">
-    <div class="card">
-      <div class="ctitle">Local Anaesthesia Doses</div>
-      <div class="row">
-        <div><div class="lbl" style="color:#fff; font-weight:700;">Loxicard IV (2%)</div><small style="color:var(--mut);">1.5 mg/kg</small></div>
-        <div class="val" id="laLox">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:#fff; font-weight:700;">Lignocaine Plain</div><small style="color:var(--mut);">Max 4 mg/kg</small></div>
-        <div class="val" id="laPl">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:#fff; font-weight:700;">Lignocaine + Adrenaline</div><small style="color:var(--mut);">Max 7 mg/kg</small></div>
-        <div class="val" id="laAd">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:#fff; font-weight:700;">Bupivacaine Max</div><small style="color:var(--mut);">Max 2.0 mg/kg</small></div>
-        <div class="val" id="laBup">--</div>
-      </div>
-      <div class="row">
-        <div><div class="lbl" style="color:#fff; font-weight:700;">Ropivacaine Max</div><small style="color:var(--mut);">Max 2.5 mg/kg</small></div>
-        <div class="val" id="laRop">--</div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="ctitle">Caudal Block (0.25% Bupivacaine)</div>
-      <div class="row"><div><div class="lbl">Lumbosacral</div><small style="color:var(--mut);">0.5 mL/kg</small></div><div class="val" id="cL">--</div></div>
-      <div class="row"><div><div class="lbl">Thoracolumbar</div><small style="color:var(--mut);">1.0 mL/kg</small></div><div class="val" id="cT">--</div></div>
-      <div class="row"><div><div class="lbl">Mid-Thoracic</div><small style="color:var(--mut);">1.25 mL/kg (max 20 mL)</small></div><div class="val" id="cM">--</div></div>
-    </div>
-  </section>
-
-  <!-- TAB 5: EMERGENCY -->
-  <section id="t5" class="tab">
-    <div class="ctitle" style="color:#f87171; margin:4px;">Emergency Doses & Dilutions</div>
-    <div class="emg">
-      <div style="display:flex; justify-content:space-between; color:#f87171; font-weight:700; font-size:0.85rem;">
-        <span>Adrenaline (1:10,000)</span><span id="emAdr">--</span>
-      </div>
-      <small style="color:#fca5a5; display:block; margin-top:4px;">10 mcg/kg IV (0.1 mL/kg of 1:10,000). Dilute 1 mL (1:1000) in 9 mL NS.</small>
-    </div>
-    <div class="emg">
-      <div style="display:flex; justify-content:space-between; color:#f87171; font-weight:700; font-size:0.85rem;">
-        <span>Atropine</span><span id="emAtr">--</span>
-      </div>
-      <small style="color:#fca5a5; display:block; margin-top:4px;">0.02 mg/kg IV (Min: 0.1 mg, Max: 0.5 mg).</small>
-    </div>
-    <div class="emg">
-      <div style="display:flex; justify-content:space-between; color:#f87171; font-weight:700; font-size:0.85rem;">
-        <span>Ephedrine</span><span id="emEph">--</span>
-      </div>
-      <small style="color:#fca5a5; display:block; margin-top:4px;">0.1 - 0.2 mg/kg IV. Dilute 30 mg in 9 mL NS (3 mg/mL).</small>
-    </div>
-    <div class="emg">
-      <div style="display:flex; justify-content:space-between; color:#f87171; font-weight:700; font-size:0.85rem;">
-        <span>Hydrocortisone</span><span id="emHyd">--</span>
-      </div>
-      <small style="color:#fca5a5; display:block; margin-top:4px;">2 - 4 mg/kg IV.</small>
-    </div>
-    <div class="emg">
-      <div style="display:flex; justify-content:space-between; color:#f87171; font-weight:700; font-size:0.85rem;">
-        <span>Succinylcholine (Laryngospasm)</span><span id="emSux">--</span>
-      </div>
-      <small style="color:#fca5a5; display:block; margin-top:4px;">IV: 1-2 mg/kg | IM: 3-4 mg/kg (with Atropine 0.02 mg/kg).</small>
-    </div>
-  </section>
-
-  <!-- TAB 6: SETTINGS -->
-  <section id="t6" class="tab">
-    <div class="card">
-      <div class="ctitle">Doctor Profile</div>
-      <div class="ig"><label for="dn">Doctor Name</label><input type="text" id="dn" placeholder="Dr. Naveenkumar S."></div>
-      <div class="ig"><label for="dr">Registration No.</label><input type="text" id="dr" placeholder="e.g. TNMC-XXXXX"></div>
-      <div class="g2">
-        <div class="ig"><label for="dd">Designation</label><input type="text" id="dd" placeholder="Anaesthesiologist"></div>
-        <div class="ig"><label for="dw">Workplace</label><input type="text" id="dw" placeholder="Hospital / Medical College"></div>
-      </div>
-      <button class="btn-sm" id="saveDoc" style="width:100%; padding:8px; background:var(--prim); font-weight:700;" type="button">Save Profile</button>
-    </div>
-    <div class="card">
-      <div class="ctitle">Standard Per-Kg Drug Doses</div>
-      <div id="setList"></div>
-    </div>
-    <div style="font-size:0.7rem; color:#cbd5e1; background:#2d1810; padding:8px; border-radius:6px; border:1px solid #7c2d12;">
-      <strong>DISCLAIMER:</strong> This application is for helping and cognitive reference purposes only. Dosing calculations must always be verified against official institutional formularies and standard textbooks.
-    </div>
-  </section>
+<!-- TAB 1: INPUTS -->
+<section id="t1" class="tab active">
+<div class="card">
+<div class="ctitle">Patient Category & Age</div>
+<!-- Category Selector -->
+<div class="category-pills">
+<button type="button" class="cat-btn active" id="btnCatChild">1. Child</button>
+<button type="button" class="cat-btn" id="btnCatInfant">2. Infant / Neonate</button>
+</div>
+<!-- Child Age Input (Years) -->
+<div class="ig" id="boxChildYears">
+<label for="ay">Age (Years)</label>
+<input type="number" id="ay" min="1" max="18" step="0.5" placeholder="e.g. 5">
+</div>
+<!-- Infant/Neonate Inputs (Months & Corrected Age) -->
+<div id="boxInfantFields" style="display: none;">
+<div class="ig">
+<label for="am">Age (Months)</label>
+<input type="number" id="am" min="0" max="24" step="1" placeholder="e.g. 6 (0-24 months)">
+</div>
+<div id="corrBox" style="background:#f8fafc; padding:10px; border-radius:8px; margin-bottom:12px; border:1px dashed #93c5fd;">
+<div style="font-size:0.75rem; font-weight:700; color:var(--prim-dark); margin-bottom:6px;">Prematurity Correction Calculator</div>
+<div class="g2">
+<div>
+<label for="ga" style="font-size:0.7rem;">GA at birth (wks)</label>
+<input type="number" id="ga" min="24" max="40" placeholder="e.g. 32">
+</div>
+<div>
+<label style="font-size:0.7rem;">Corrected Age</label>
+<div id="corrTxt" style="font-size:0.82rem; font-weight:700; padding-top:8px; color:var(--prim-dark);">--</div>
+</div>
+</div>
+<div style="font-size:0.68rem; color:var(--txt-muted); margin-top:4px;">Formula: Chronological age - (40 - GA at birth)</div>
+</div>
+</div>
+<!-- Weight Input -->
+<div class="ig">
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:5px;">
+<label for="wt" style="margin:0;">Weight (kg)</label>
+<button class="btn-sm" id="estWtBtn" type="button">Estimate Wt</button>
+</div>
+<input type="number" id="wt" min="0.5" max="100" step="0.1" placeholder="Enter weight in kg">
+</div>
+</div>
+<!-- Available Drugs Pills -->
+<div class="card">
+<div class="ctitle">Available Drugs</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" id="p-atro" data-d="Atropine" style="display:none;">Atropine</div>
+<div class="pill" data-d="Glycopyrollate">Glycopyrollate</div>
+<div class="pill" data-d="Midazolam">Midazolam</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Fentanyl">Fentanyl</div>
+<div class="pill" data-d="Remifentanil">remifentanyl</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Thiopentone">Thiopentone</div>
+<div class="pill" data-d="Propofol">Propofol</div>
+<div class="pill" data-d="Etomidate">Etomidate</div>
+<div class="pill" data-d="Ketamine">Ketamine</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Suxa">Suxa</div>
+<div class="pill" data-d="Atracurium">Atracurium</div>
+<div class="pill" data-d="Vecuronium">vecuronium</div>
+<div class="pill" data-d="Rocuronium">Rocuronium</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Paracetamol">Paracetamol</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Dexa">Dexa</div>
+<div class="pill" data-d="Emeset">Emeset</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Neostigmine">Neostigmine</div>
+<div class="pill" data-d="Glyco_rev">Glycopyrollate (Rev)</div>
+</div>
+</div>
+<div class="pgroup">
+<div class="pgrid">
+<div class="pill" data-d="Sugammadex">Sugammadex</div>
+</div>
+</div>
+</div>
+</section>
+<!-- TAB 2: EQUIPMENT -->
+<section id="t2" class="tab">
+<div class="card">
+<div class="ctitle">Airway Equipment</div>
+<div class="row"><span class="lbl">Mask Size</span><span class="val" id="eqM">--</span></div>
+<div class="row"><span class="lbl">Airway Size (OPA Chart)</span><span class="val" id="eqA">--</span></div>
+<div class="row"><span class="lbl">Laryngoscope Blade</span><span class="val" id="eqB">--</span></div>
+<div class="row"><span class="lbl">ETT Uncuffed (Whole ID)</span><span class="val" id="eqEu">--</span></div>
+<div class="row"><span class="lbl">ETT Cuffed (Whole ID)</span><span class="val" id="eqEc">--</span></div>
+<div class="row"><span class="lbl">ETT Depth (Oral Lip)</span><span class="val" id="eqEd">--</span></div>
+</div>
+<div class="card">
+<div class="ctitle">Ventilator & Monitor</div>
+<div class="row"><span class="lbl">VT (6 - 8 mL/kg)</span><span class="val" id="eqVt">--</span></div>
+<div class="row"><span class="lbl">RR (bpm)</span><span class="val" id="eqRr">--</span></div>
+<div class="row"><span class="lbl">HR Max (Threshold)</span><span class="val" id="eqHr">--</span></div>
+</div>
+</section>
+<!-- TAB 3: GA DRUGS -->
+<section id="t3" class="tab">
+<div class="ctitle" style="margin:4px 0 8px 4px;">GA Drugs & Calculated Doses (mg / mcg)</div>
+<div id="gaList"></div>
+</section>
+<!-- TAB 4: LOCAL -->
+<section id="t4" class="tab">
+<div class="card">
+<div class="ctitle">Local Anaesthesia Doses</div>
+<div class="row">
+<div><div class="lbl" style="color:var(--txt); font-weight:700;">Loxicard IV (2%)</div><small style="color:var(--txt-muted);">1.5 mg/kg (airway reflex)</small></div>
+<div class="val" id="laLox">--</div>
+</div>
+<div class="row">
+<div><div class="lbl" style="color:var(--txt); font-weight:700;">Lignocaine Plain</div><small style="color:var(--txt-muted);">Max 4 mg/kg</small></div>
+<div class="val" id="laPl">--</div>
+</div>
+<div class="row">
+<div><div class="lbl" style="color:var(--txt); font-weight:700;">Lignocaine + Adrenaline</div><small style="color:var(--txt-muted);">Max 7 mg/kg</small></div>
+<div class="val" id="laAd">--</div>
+</div>
+<div class="row">
+<div><div class="lbl" style="color:var(--txt); font-weight:700;">Bupivacaine Max</div><small style="color:var(--txt-muted);">Max 2.0 mg/kg</small></div>
+<div class="val" id="laBup">--</div>
+</div>
+<div class="row">
+<div><div class="lbl" style="color:var(--txt); font-weight:700;">Ropivacaine Max</div><small style="color:var(--txt-muted);">Max 2.5 mg/kg</small></div>
+<div class="val" id="laRop">--</div>
+</div>
+</div>
+<div class="card">
+<div class="ctitle">Caudal Block (0.25% Bupivacaine)</div>
+<div class="row"><div><div class="lbl">Lumbosacral</div><small style="color:var(--txt-muted);">0.5 mL/kg</small></div><div class="val" id="cL">--</div></div>
+<div class="row"><div><div class="lbl">Thoracolumbar</div><small style="color:var(--txt-muted);">1.0 mL/kg</small></div><div class="val" id="cT">--</div></div>
+<div class="row"><div><div class="lbl">Mid-Thoracic</div><small style="color:var(--txt-muted);">1.25 mL/kg (max 20 mL)</small></div><div class="val" id="cM">--</div></div>
+</div>
+</section>
+<!-- TAB 5: EMERGENCY -->
+<section id="t5" class="tab">
+<div class="ctitle" style="color:#e11d48; margin:4px 0 8px 4px;">Emergency Protocols & Dilutions</div>
+<div class="emg">
+<div style="display:flex; justify-content:space-between; color:#be123c; font-weight:700; font-size:0.85rem;">
+<span>Adrenaline (1:10,000)</span><span id="emAdr">--</span>
+</div>
+<small style="color:#881337; display:block; margin-top:4px; line-height:1.4;">10 mcg/kg IV (0.1 mL/kg of 1:10,000). Dilute 1 mL (1:1000) in 9 mL NS.</small>
+</div>
+<div class="emg">
+<div style="display:flex; justify-content:space-between; color:#be123c; font-weight:700; font-size:0.85rem;">
+<span>Atropine</span><span id="emAtr">--</span>
+</div>
+<small style="color:#881337; display:block; margin-top:4px; line-height:1.4;">0.02 mg/kg IV (Min: 0.1 mg, Max single: 0.5 mg).</small>
+</div>
+<div class="emg">
+<div style="display:flex; justify-content:space-between; color:#be123c; font-weight:700; font-size:0.85rem;">
+<span>Ephedrine</span><span id="emEph">--</span>
+</div>
+<small style="color:#881337; display:block; margin-top:4px; line-height:1.4;">0.1 - 0.2 mg/kg IV. Dilute 30 mg ampoule in 9 mL NS (3 mg/mL).</small>
+</div>
+<div class="emg">
+<div style="display:flex; justify-content:space-between; color:#be123c; font-weight:700; font-size:0.85rem;">
+<span>Hydrocortisone</span><span id="emHyd">--</span>
+</div>
+<small style="color:#881337; display:block; margin-top:4px; line-height:1.4;">2 - 4 mg/kg IV (Anaphylaxis / Status Asthmaticus / Stress dose).</small>
+</div>
+<div class="emg">
+<div style="display:flex; justify-content:space-between; color:#be123c; font-weight:700; font-size:0.85rem;">
+<span>Succinylcholine (Laryngospasm)</span><span id="emSux">--</span>
+</div>
+<small style="color:#881337; display:block; margin-top:4px; line-height:1.4;">IV: 1-2 mg/kg | IM: 3-4 mg/kg (always combine with Atropine 0.02 mg/kg).</small>
+</div>
+</section>
+<!-- TAB 6: SETTINGS -->
+<section id="t6" class="tab">
+<div class="card">
+<div class="ctitle">Doctor Profile</div>
+<div class="ig"><label for="dn">Doctor Name</label><input type="text" id="dn" placeholder="Dr. Naveenkumar S."></div>
+<div class="ig"><label for="dr">Registration No.</label><input type="text" id="dr" placeholder="e.g. TNMC-XXXXX"></div>
+<div class="g2">
+<div class="ig"><label for="dd">Designation</label><input type="text" id="dd" placeholder="Anaesthesiologist"></div>
+<div class="ig"><label for="dw">Workplace</label><input type="text" id="dw" placeholder="Hospital / Medical College"></div>
+</div>
+<button class="btn-sm" id="saveDoc" style="width:100%; padding:9px; background:var(--prim); color:#fff; font-weight:700; border-radius:6px;" type="button">Save Profile</button>
+</div>
+<div class="card">
+<div class="ctitle">Standard Per-Kg Formulary Doses</div>
+<div id="setList"></div>
+</div>
+<div style="font-size:0.72rem; color:#92400e; background:#fef3c7; padding:10px; border-radius:8px; border:1px solid #fde68a; line-height:1.4;">
+<strong>CLINICAL DISCLAIMER:</strong> This application is for helping and cognitive reference purposes only. Dosing calculations and equipment recommendations must always be correlated with standard textbooks and institutional guidelines before patient administration.
+</div>
+</section>
 </main>
-
 <nav>
-  <button class="nbtn active" data-t="t1"><span>📋</span>Inputs</button>
-  <button class="nbtn" data-t="t2"><span>🛠️</span>Equip</button>
-  <button class="nbtn" data-t="t3"><span>💊</span>GA Drugs</button>
-  <button class="nbtn" data-t="t4"><span>💉</span>Local</button>
-  <button class="nbtn" data-t="t5"><span>🚨</span>Emerg</button>
-  <button class="nbtn" data-t="t6"><span>⚙️</span>Settings</button>
+<button class="nbtn active" data-t="t1"><span>📋</span>Inputs</button>
+<button class="nbtn" data-t="t2"><span>🛠️</span>Equip</button>
+<button class="nbtn" data-t="t3"><span>💊</span>GA Drugs</button>
+<button class="nbtn" data-t="t4"><span>💉</span>Local</button>
+<button class="nbtn" data-t="t5"><span>🚨</span>Emerg</button>
+<button class="nbtn" data-t="t6"><span>⚙️</span>Settings</button>
 </nav>
-
 <script>
-  const defDoses = {
-    Atropine: { d: 0.02, u: "mg/kg", min: 0.1, max: 0.5 },
-    Glycopyrollate: { d: 0.005, u: "mg/kg", max: 0.2 },
-    Midazolam: { d: 0.1, u: "mg/kg", max: 5 },
-    Fentanyl: { d: 1.5, u: "mcg/kg", max: 100 },
-    Remifentanil: { d: 0.5, u: "mcg/kg" },
-    Thiopentone: { d: 5, u: "mg/kg", max: 500 },
-    Propofol: { d: 3, u: "mg/kg" },
-    Etomidate: { d: 0.3, u: "mg/kg", max: 20 },
-    Ketamine: { d: 2, u: "mg/kg", max: 100 },
-    Suxa: { d: 2, u: "mg/kg" },
-    Atracurium: { d: 0.5, u: "mg/kg" },
-    Vecuronium: { d: 0.1, u: "mg/kg" },
-    Rocuronium: { d: 0.6, u: "mg/kg" },
-    Paracetamol: { d: 15, u: "mg/kg", max: 1000 },
-    Dexa: { d: 0.15, u: "mg/kg", max: 8 },
-    Emeset: { d: 0.1, u: "mg/kg", max: 4 },
-    Neostigmine: { d: 0.05, u: "mg/kg", max: 2.5 },
-    Glyco_rev: { d: 0.01, u: "mg/kg", max: 0.5 },
-    Sugammadex: { d: 2, u: "mg/kg" }
-  };
-
-  let cfg = JSON.parse(localStorage.getItem('pCfg')) || defDoses;
-  let sel = new Set();
-
-  const ay = document.getElementById('ay');
-  const am = document.getElementById('am');
-  const ga = document.getElementById('ga');
-  const wt = document.getElementById('wt');
-
-  document.querySelectorAll('.nbtn').forEach(b => b.onclick = () => {
-    document.querySelectorAll('.nbtn').forEach(x => x.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-    b.classList.add('active');
-    document.getElementById(b.dataset.t).classList.add('active');
-  });
-
-  am.onfocus = () => document.getElementById('corrBox').style.display = 'block';
-  am.onclick = () => document.getElementById('corrBox').style.display = 'block';
-
-  ay.oninput = () => {
-    let v = parseFloat(ay.value);
-    if (!isNaN(v)) am.value = Math.round(v * 12);
-    calc();
-  };
-
-  am.oninput = () => {
-    let v = parseFloat(am.value);
-    if (!isNaN(v)) ay.value = (v / 12).toFixed(1);
-    calc();
-  };
-
-  ga.oninput = corr;
-  wt.oninput = calc;
-
-  document.getElementById('estWtBtn').onclick = () => {
-    let m = parseFloat(am.value) || (parseFloat(ay.value) || 0) * 12;
-    let y = m / 12;
-    let w = 3.5;
-    if (m <= 12) w = (m + 9) / 2;
-    else if (y <= 5) w = 2 * (y + 4);
-    else w = (y * 3) + 7;
-    wt.value = w.toFixed(1);
-    calc();
-  };
-
-  document.querySelectorAll('.pill').forEach(p => p.onclick = () => {
-    let d = p.dataset.d;
-    if (p.classList.contains('sel')) {
-      p.classList.remove('sel');
-      sel.delete(d);
-    } else {
-      p.classList.add('sel');
-      sel.add(d);
-    }
-    renderGA();
-  });
-
-  function corr() {
-    let m = parseFloat(am.value) || 0;
-    let g = parseFloat(ga.value);
-    if (!isNaN(g) && g < 40 && m > 0) {
-      let pw = 40 - g;
-      document.getElementById('corrTxt').innerText = `${(m - (pw / 4.345)).toFixed(1)} mo (${pw}w prem)`;
-    } else {
-      document.getElementById('corrTxt').innerText = '--';
-    }
-  }
-
-  function calc() {
-    let y = parseFloat(ay.value) || (parseFloat(am.value) / 12) || 0;
-    let m = parseFloat(am.value) || (y * 12) || 0;
-    let w = parseFloat(wt.value) || 0;
-
-    document.getElementById('sumBadge').innerText = `${m.toFixed(0)} mo | ${w > 0 ? w + ' kg' : '-- kg'}`;
-
-    let atP = document.getElementById('p-atro');
-    if (y < 2 && (y > 0 || m > 0)) {
-      atP.style.display = 'inline-block';
-    } else {
-      atP.style.display = 'none';
-      sel.delete('Atropine');
-      atP.classList.remove('sel');
-    }
-
-    corr();
-    eq(y, m, w);
-    renderGA(w);
-    loc(w);
-    emg(w);
-  }
-
-  function eq(y, m, w) {
-    let mask = m < 1 ? "Sz 00/0" : m <= 12 ? "Sz 1" : y <= 3 ? "Sz 2" : y <= 7 ? "Sz 3" : "Sz 4";
-    let aw = m < 1 ? '00 <span class="badge-c" style="background:#3b82f6">Blue</span>' :
-             m <= 6 ? '0 <span class="badge-c" style="background:#10b981">Black</span>' :
-             y <= 2 ? '1 <span class="badge-c" style="background:#fff">White</span>' :
-             y <= 6 ? '2 <span class="badge-c" style="background:#22c55e">Green</span>' :
-             y <= 10 ? '3 <span class="badge-c" style="background:#eab308">Yellow</span>' :
-             '4 <span class="badge-c" style="background:#ef4444;color:#fff">Red</span>';
-    let bl = m < 1 ? "Miller 0" : m <= 12 ? "Miller 1" : y <= 5 ? "Mac 2 / Miller 1.5" : y <= 10 ? "Mac 2-3" : "Mac 3";
-    let eu = "--", ec = "--", ed = "--";
-
-    if (y < 1) {
-      eu = m < 1 ? "3.0" : "3.5";
-      ec = m < 1 ? "2.5" : "3.0";
-      ed = m < 1 ? "9 cm" : "10 cm";
-    } else {
-      eu = ((y / 4) + 4).toFixed(1);
-      ec = ((y / 4) + 3.5).toFixed(1);
-      ed = ((y / 2) + 12).toFixed(1) + ' cm';
-    }
-
-    document.getElementById('eqM').innerText = mask;
-    document.getElementById('eqA').innerHTML = aw;
-    document.getElementById('eqB').innerText = bl;
-    document.getElementById('eqEu').innerText = eu + ' mm';
-    document.getElementById('eqEc').innerText = ec + ' mm';
-    document.getElementById('eqEd').innerText = ed;
-    document.getElementById('eqVt').innerText = w > 0 ? `${Math.round(w * 6)} - ${Math.round(w * 8)} mL` : '--';
-    document.getElementById('eqRr').innerText = m < 1 ? "40 - 50" : m <= 12 ? "30 - 40" : y <= 4 ? "24 - 30" : y <= 10 ? "18 - 24" : "12 - 16";
-    document.getElementById('eqHr').innerText = m < 1 ? "180" : m <= 12 ? "160" : y <= 4 ? "140" : y <= 10 ? "120" : "100";
-  }
-
-  function renderGA(w = parseFloat(wt.value) || 0) {
-    let c = document.getElementById('gaList');
-    c.innerHTML = '';
-    let y = parseFloat(ay.value) || (parseFloat(am.value) / 12) || 0;
-    let keys = Object.keys(cfg).filter(k => !(k === 'Atropine' && y >= 2));
-    let sorted = [...keys.filter(k => sel.has(k)), ...keys.filter(k => !sel.has(k))];
-
-    sorted.forEach(k => {
-      let item = cfg[k];
-      let s = sel.has(k);
-      let txt = "--";
-      if (w > 0) {
-        let t = item.d * w;
-        if (item.min && t < item.min) t = item.min;
-        if (item.max && t > item.max) t = item.max;
-        txt = `${t.toFixed(t < 10 && item.u !== 'mcg/kg' ? 2 : 1)} ${item.u}`;
-      }
-      let d = document.createElement('div');
-      d.className = `dcard ${s ? 'sel' : ''}`;
-      d.innerHTML = `<div class="dhdr"><span>${k === 'Glyco_rev' ? 'Glyco (Rev)' : k} ${s ? '★' : ''}</span><span style="color:var(--acc)">${txt}</span></div><small style="color:var(--mut);font-size:0.7rem">${item.d} ${item.u}</small>`;
-      c.appendChild(d);
-    });
-  }
-
-  function loc(w) {
-    if (w <= 0) {
-      ['laLox', 'laPl', 'laAd', 'laBup', 'laRop', 'cL', 'cT', 'cM'].forEach(i => document.getElementById(i).innerText = '--');
-      return;
-    }
-    document.getElementById('laLox').innerText = `${(w * 1.5).toFixed(1)} mg (${(w * 1.5 / 20).toFixed(2)} mL 2%)`;
-    document.getElementById('laPl').innerText = `${(w * 4).toFixed(1)} mg (${(w * 4 / 20).toFixed(1)} mL 2%)`;
-    document.getElementById('laAd').innerText = `${(w * 7).toFixed(1)} mg (${(w * 7 / 20).toFixed(1)} mL 2%)`;
-    document.getElementById('laBup').innerText = `${(w * 2).toFixed(1)} mg (${(w * 2 / 2.5).toFixed(1)} mL 0.25%)`;
-    document.getElementById('laRop').innerText = `${(w * 2.5).toFixed(1)} mg (${(w * 2.5 / 2).toFixed(1)} mL 0.2%)`;
-    document.getElementById('cL').innerText = `${(w * 0.5).toFixed(1)} mL`;
-    document.getElementById('cT').innerText = `${Math.min(w * 1, 20).toFixed(1)} mL`;
-    document.getElementById('cM').innerText = `${Math.min(w * 1.25, 20).toFixed(1)} mL (max 20)`;
-  }
-
-  function emg(w) {
-    if (w <= 0) {
-      ['emAdr', 'emAtr', 'emEph', 'emHyd', 'emSux'].forEach(i => document.getElementById(i).innerText = '--');
-      return;
-    }
-    document.getElementById('emAdr').innerText = `${(w * 10).toFixed(0)} mcg (${(w * 0.1).toFixed(2)} mL 1:10k)`;
-    let at = Math.min(Math.max(w * 0.02, 0.1), 0.5);
-    document.getElementById('emAtr').innerText = `${at.toFixed(2)} mg`;
-    document.getElementById('emEph').innerText = `${(w * 0.15).toFixed(1)} mg`;
-    document.getElementById('emHyd').innerText = `${(w * 4).toFixed(0)} mg`;
-    document.getElementById('emSux').innerText = `IV: ${(w * 2).toFixed(1)} mg | IM: ${(w * 4).toFixed(1)} mg`;
-  }
-
-  function setForm() {
-    let c = document.getElementById('setList');
-    c.innerHTML = '';
-    Object.keys(cfg).forEach(k => {
-      let d = document.createElement('div');
-      d.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:6px; align-items:center;';
-      d.innerHTML = `<span style="font-size:0.75rem">${k}</span><div style="display:flex; gap:4px;"><input type="number" step="0.001" value="${cfg[k].d}" style="width:65px; padding:3px;" data-k="${k}"><span style="font-size:0.7rem; color:var(--mut);">${cfg[k].u}</span></div>`;
-      c.appendChild(d);
-    });
-    c.querySelectorAll('input').forEach(i => i.onchange = e => {
-      cfg[e.target.dataset.k].d = parseFloat(e.target.value);
-      localStorage.setItem('pCfg', JSON.stringify(cfg));
-      calc();
-    });
-  }
-
-  const dn = document.getElementById('dn');
-  const dr = document.getElementById('dr');
-  const dd = document.getElementById('dd');
-  const dw = document.getElementById('dw');
-
-  let sp = JSON.parse(localStorage.getItem('pDoc')) || {};
-  if (sp.n) dn.value = sp.n;
-  if (sp.r) dr.value = sp.r;
-  if (sp.d) dd.value = sp.d;
-  if (sp.w) dw.value = sp.w;
-
-  document.getElementById('saveDoc').onclick = () => {
-    localStorage.setItem('pDoc', JSON.stringify({ n: dn.value, r: dr.value, d: dd.value, w: dw.value }));
-    alert('Profile saved!');
-  };
-
-  setForm();
-  calc();
+let currentCategory = 'child'; // 'child' or 'infant'
+const defDoses = {
+Atropine: { d: 0.02, u: "mg/kg", min: 0.1, max: 0.5 },
+Glycopyrollate: { d: 0.005, u: "mg/kg", max: 0.2 },
+Midazolam: { d: 0.1, u: "mg/kg", max: 5 },
+Fentanyl: { d: 1.5, u: "mcg/kg", max: 100 },
+Remifentanil: { d: 0.5, u: "mcg/kg" },
+Thiopentone: { d: 5, u: "mg/kg", max: 500 },
+Propofol: { d: 3, u: "mg/kg" },
+Etomidate: { d: 0.3, u: "mg/kg", max: 20 },
+Ketamine: { d: 2, u: "mg/kg", max: 100 },
+Suxa: { d: 2, u: "mg/kg" },
+Atracurium: { d: 0.5, u: "mg/kg" },
+Vecuronium: { d: 0.1, u: "mg/kg" },
+Rocuronium: { d: 0.6, u: "mg/kg" },
+Paracetamol: { d: 15, u: "mg/kg", max: 1000 },
+Dexa: { d: 0.15, u: "mg/kg", max: 8 },
+Emeset: { d: 0.1, u: "mg/kg", max: 4 },
+Neostigmine: { d: 0.05, u: "mg/kg", max: 2.5 },
+Glyco_rev: { d: 0.01, u: "mg/kg", max: 0.5 },
+Sugammadex: { d: 2, u: "mg/kg" }
+};
+let cfg = JSON.parse(localStorage.getItem('pCfg')) || defDoses;
+let sel = new Set();
+const ay = document.getElementById('ay');
+const am = document.getElementById('am');
+const ga = document.getElementById('ga');
+const wt = document.getElementById('wt');
+const btnCatChild = document.getElementById('btnCatChild');
+const btnCatInfant = document.getElementById('btnCatInfant');
+const boxChildYears = document.getElementById('boxChildYears');
+const boxInfantFields = document.getElementById('boxInfantFields');
+// Category Toggle
+btnCatChild.onclick = () => {
+currentCategory = 'child';
+btnCatChild.classList.add('active');
+btnCatInfant.classList.remove('active');
+boxChildYears.style.display = 'block';
+boxInfantFields.style.display = 'none';
+am.value = '';
+ga.value = '';
+calc();
+};
+btnCatInfant.onclick = () => {
+currentCategory = 'infant';
+btnCatInfant.classList.add('active');
+btnCatChild.classList.remove('active');
+boxChildYears.style.display = 'none';
+boxInfantFields.style.display = 'block';
+ay.value = '';
+calc();
+};
+// Nav Switcher
+document.querySelectorAll('.nbtn').forEach(b => b.onclick = () => {
+document.querySelectorAll('.nbtn').forEach(x => x.classList.remove('active'));
+document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+b.classList.add('active');
+document.getElementById(b.dataset.t).classList.add('active');
+});
+ay.oninput = calc;
+am.oninput = () => { corr(); calc(); };
+ga.oninput = () => { corr(); calc(); };
+wt.oninput = calc;
+document.getElementById('estWtBtn').onclick = () => {
+let w = 3.5;
+if (currentCategory === 'infant') {
+let m = parseFloat(am.value) || 0;
+if (m <= 0) w = 3.5;
+else if (m <= 12) w = (m + 9) / 2;
+else w = (m / 12) * 2 + 8;
+} else {
+let y = parseFloat(ay.value) || 3;
+if (y <= 5) w = 2 * (y + 4);
+else w = (y * 3) + 7;
+}
+wt.value = w.toFixed(1);
+calc();
+};
+document.querySelectorAll('.pill').forEach(p => p.onclick = () => {
+let d = p.dataset.d;
+if (p.classList.contains('sel')) {
+p.classList.remove('sel');
+sel.delete(d);
+} else {
+p.classList.add('sel');
+sel.add(d);
+}
+renderGA();
+});
+function corr() {
+let m = parseFloat(am.value) || 0;
+let g = parseFloat(ga.value);
+if (!isNaN(g) && g < 40 && m > 0) {
+let pw = 40 - g;
+document.getElementById('corrTxt').innerText = ⁠${(m - (pw / 4.345)).toFixed(1)} mo (${pw}w prem)⁠;
+} else {
+document.getElementById('corrTxt').innerText = '--';
+}
+}
+function calc() {
+let y = 0;
+let m = 0;
+if (currentCategory === 'infant') {
+m = parseFloat(am.value) || 0;
+y = m / 12;
+} else {
+y = parseFloat(ay.value) || 0;
+m = y * 12;
+}
+let w = parseFloat(wt.value) || 0;
+// Header badge
+if (currentCategory === 'infant') {
+document.getElementById('sumBadge').innerText = ⁠${m.toFixed(0)} mo | ${w > 0 ? w + ' kg' : '-- kg'}⁠;
+} else {
+document.getElementById('sumBadge').innerText = ⁠${y > 0 ? y + ' yr' : 'Child'} | ${w > 0 ? w + ' kg' : '-- kg'}⁠;
+}
+// Atropine visibility (< 2 years)
+let atP = document.getElementById('p-atro');
+if ((currentCategory === 'infant' && m < 24) || (currentCategory === 'child' && y > 0 && y < 2)) {
+atP.style.display = 'inline-block';
+} else {
+atP.style.display = 'none';
+sel.delete('Atropine');
+atP.classList.remove('sel');
+}
+eq(y, m, w);
+renderGA(w);
+loc(w);
+emg(w);
+}
+function eq(y, m, w) {
+// Face Mask
+let mask = "Size 1 (Infant)";
+if (currentCategory === 'infant') {
+if (m < 1) mask = "Size 00 / 0 (Preterm/Neonate)";
+else if (m <= 12) mask = "Size 1 (Infant)";
+else mask = "Size 2 (Toddler)";
+} else {
+if (y <= 3) mask = "Size 2 (Toddler)";
+else if (y <= 7) mask = "Size 3 (Child)";
+else mask = "Size 4 (Large Child/Adolescent)";
+}
+// Airway Size updated strictly according to chart:
+// Size 000 | 40 mm | Pink  | Preterm / Neonates
+// Size 00  | 50 mm | Blue  | Infants / Babies (approx. 0-12 months)
+// Size 0   | 60 mm | Black | Small Child / Toddler (approx. 1-3 years)
+// Size 1   | 70 mm | White | Child (approx. 3-8 years)
+// Size 2   | 80-85 mm | Green | Older Child / Adolescent (approx. 8-12 years)
+// Size 3   | 90 mm | Yellow | Large Adolescent / Small Adult (>12 years)
+let aw = "--";
+if (currentCategory === 'infant') {
+if (m < 1) {
+aw = 'Size 000 (40 mm) <span class="badge-c" style="background:#f472b6; color:#fff;">Pink</span>';
+} else {
+aw = 'Size 00 (50 mm) <span class="badge-c" style="background:#3b82f6; color:#fff;">Blue</span>';
+}
+} else {
+if (y <= 3) {
+aw = 'Size 0 (60 mm) <span class="badge-c" style="background:#0f172a; color:#fff;">Black</span>';
+} else if (y <= 8) {
+aw = 'Size 1 (70 mm) <span class="badge-c" style="background:#ffffff; color:#0f172a; border:1px solid #cbd5e1;">White</span>';
+} else if (y <= 12) {
+aw = 'Size 2 (80-85 mm) <span class="badge-c" style="background:#22c55e; color:#fff;">Green</span>';
+} else {
+aw = 'Size 3 (90 mm) <span class="badge-c" style="background:#eab308; color:#0f172a;">Yellow</span>';
+}
+}
+// Blade
+let bl = "Miller 1";
+if (currentCategory === 'infant') {
+bl = m < 1 ? "Miller 0 (Straight)" : "Miller 1 (Straight)";
+} else {
+if (y <= 5) bl = "Mac 2 / Miller 1.5";
+else if (y <= 10) bl = "Mac 2 - 3";
+else bl = "Mac 3 (Curved)";
+}
+// ET Tube Sizes: Round off to WHOLE NUMBER (no decimals)
+let eu = "--", ec = "--", ed = "--";
+if (currentCategory === 'infant') {
+if (m < 1) {
+eu = "3 mm ID";
+ec = "3 mm ID";
+ed = "9 cm";
+} else {
+eu = "4 mm ID";
+ec = "3 mm ID";
+ed = "10 cm";
+}
+} else {
+let rawUncuffed = (y / 4) + 4;
+let rawCuffed = (y / 4) + 3.5;
+eu = ⁠${Math.round(rawUncuffed)} mm ID⁠;
+ec = ⁠${Math.round(rawCuffed)} mm ID⁠;
+ed = ⁠${((y / 2) + 12).toFixed(1)} cm⁠;
+}
+document.getElementById('eqM').innerText = mask;
+document.getElementById('eqA').innerHTML = aw;
+document.getElementById('eqB').innerText = bl;
+document.getElementById('eqEu').innerText = eu;
+document.getElementById('eqEc').innerText = ec;
+document.getElementById('eqEd').innerText = ed;
+document.getElementById('eqVt').innerText = w > 0 ? ⁠${Math.round(w * 6)} - ${Math.round(w * 8)} mL⁠ : '--';
+// RR
+if (currentCategory === 'infant') {
+document.getElementById('eqRr').innerText = m < 1 ? "40 - 50 bpm" : "30 - 40 bpm";
+document.getElementById('eqHr').innerText = m < 1 ? "180 bpm" : "160 bpm";
+} else {
+document.getElementById('eqRr').innerText = y <= 4 ? "24 - 30 bpm" : y <= 10 ? "18 - 24 bpm" : "12 - 16 bpm";
+document.getElementById('eqHr').innerText = y <= 4 ? "140 bpm" : y <= 10 ? "120 bpm" : "100 bpm";
+}
+}
+function renderGA(w = parseFloat(wt.value) || 0) {
+let c = document.getElementById('gaList');
+c.innerHTML = '';
+let y = currentCategory === 'child' ? (parseFloat(ay.value) || 0) : ((parseFloat(am.value) || 0) / 12);
+let keys = Object.keys(cfg).filter(k => !(k === 'Atropine' && y >= 2));
+let sorted = [...keys.filter(k => sel.has(k)), ...keys.filter(k => !sel.has(k))];
+sorted.forEach(k => {
+let item = cfg[k];
+let s = sel.has(k);
+let txt = "--";
+// Absolute calculated unit without '/kg'
+let absUnit = item.u.replace('/kg', '').trim();
+if (w > 0) {
+let t = item.d * w;
+if (item.min && t < item.min) t = item.min;
+if (item.max && t > item.max) t = item.max;
+let formatted = (t < 10 && absUnit !== 'mcg') ? t.toFixed(2) : t.toFixed(1);
+txt = ⁠${formatted} ${absUnit}⁠;
+}
+let d = document.createElement('div');
+d.className = ⁠dcard ${s ? 'sel' : ''}⁠;
+d.innerHTML = ⁠<div class="dhdr"> <span style="color:var(--txt);">${k === 'Glyco_rev' ? 'Glycopyrollate (Rev)' : k} ${s ? '★' : ''}</span> <span style="color:var(--prim-dark); font-size:0.95rem;">${txt}</span> </div> <small style="color:var(--txt-muted); font-size:0.72rem;">Std dose: ${item.d} ${item.u}</small>⁠;
+c.appendChild(d);
+});
+}
+function loc(w) {
+if (w <= 0) {
+['laLox', 'laPl', 'laAd', 'laBup', 'laRop', 'cL', 'cT', 'cM'].forEach(i => document.getElementById(i).innerText = '--');
+return;
+}
+document.getElementById('laLox').innerText = ⁠${(w * 1.5).toFixed(1)} mg (${(w * 1.5 / 20).toFixed(2)} mL 2%)⁠;
+document.getElementById('laPl').innerText = ⁠${(w * 4).toFixed(1)} mg (${(w * 4 / 20).toFixed(1)} mL 2%)⁠;
+document.getElementById('laAd').innerText = ⁠${(w * 7).toFixed(1)} mg (${(w * 7 / 20).toFixed(1)} mL 2%)⁠;
+document.getElementById('laBup').innerText = ⁠${(w * 2).toFixed(1)} mg (${(w * 2 / 2.5).toFixed(1)} mL 0.25%)⁠;
+document.getElementById('laRop').innerText = ⁠${(w * 2.5).toFixed(1)} mg (${(w * 2.5 / 2).toFixed(1)} mL 0.2%)⁠;
+document.getElementById('cL').innerText = ⁠${(w * 0.5).toFixed(1)} mL⁠;
+document.getElementById('cT').innerText = ⁠${Math.min(w * 1, 20).toFixed(1)} mL⁠;
+document.getElementById('cM').innerText = ⁠${Math.min(w * 1.25, 20).toFixed(1)} mL (max 20)⁠;
+}
+function emg(w) {
+if (w <= 0) {
+['emAdr', 'emAtr', 'emEph', 'emHyd', 'emSux'].forEach(i => document.getElementById(i).innerText = '--');
+return;
+}
+document.getElementById('emAdr').innerText = ⁠${(w * 10).toFixed(0)} mcg (${(w * 0.1).toFixed(2)} mL 1:10k)⁠;
+let at = Math.min(Math.max(w * 0.02, 0.1), 0.5);
+document.getElementById('emAtr').innerText = ⁠${at.toFixed(2)} mg⁠;
+document.getElementById('emEph').innerText = ⁠${(w * 0.15).toFixed(1)} mg⁠;
+document.getElementById('emHyd').innerText = ⁠${(w * 4).toFixed(0)} mg⁠;
+document.getElementById('emSux').innerText = ⁠IV: ${(w * 2).toFixed(1)} mg | IM: ${(w * 4).toFixed(1)} mg⁠;
+}
+function setForm() {
+let c = document.getElementById('setList');
+c.innerHTML = '';
+Object.keys(cfg).forEach(k => {
+let d = document.createElement('div');
+d.style.cssText = 'display:flex; justify-content:space-between; margin-bottom:8px; align-items:center;';
+d.innerHTML = ⁠<span style="font-size:0.8rem; font-weight:600; color:var(--txt);">${k}</span> <div style="display:flex; gap:6px; align-items:center;"> <input type="number" step="0.001" value="${cfg[k].d}" style="width:70px; padding:4px 6px; font-size:0.85rem;" data-k="${k}"> <span style="font-size:0.75rem; color:var(--txt-muted); min-width:45px;">${cfg[k].u}</span> </div>⁠;
+c.appendChild(d);
+});
+c.querySelectorAll('input').forEach(i => i.onchange = e => {
+cfg[e.target.dataset.k].d = parseFloat(e.target.value);
+localStorage.setItem('pCfg', JSON.stringify(cfg));
+calc();
+});
+}
+const dn = document.getElementById('dn');
+const dr = document.getElementById('dr');
+const dd = document.getElementById('dd');
+const dw = document.getElementById('dw');
+let sp = JSON.parse(localStorage.getItem('pDoc')) || {};
+if (sp.n) dn.value = sp.n;
+if (sp.r) dr.value = sp.r;
+if (sp.d) dd.value = sp.d;
+if (sp.w) dw.value = sp.w;
+document.getElementById('saveDoc').onclick = () => {
+localStorage.setItem('pDoc', JSON.stringify({ n: dn.value, r: dr.value, d: dd.value, w: dw.value }));
+alert('Doctor profile saved successfully!');
+};
+setForm();
+calc();
 </script>
 </body>
 </html>
