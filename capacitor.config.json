@@ -1,0 +1,6 @@
+{
+  "appId": "com.nkplanner.app",
+  "appName": "Pediatric Anaesthesia planner",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
